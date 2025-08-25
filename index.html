@@ -504,8 +504,9 @@
 
         // --- FUNGSI UNTUK MEMBINA JADUAL SECARA DINAMIK ---
         
-        function createScoreSelect(className) {
-            let select = `<div class="select-wrapper"><select name="${className}_skor" class="${className} skor-select">`;
+        function createScoreSelect(prefix, rowNumber) {
+            // FIX: Correctly generate name attribute
+            let select = `<div class="select-wrapper"><select name="${prefix}_skor_${rowNumber}" class="${prefix}-skor skor-select">`;
             for (let i = 0; i <= 5; i++) { select += `<option value="${i}">${i}</option>`; }
             select += `</select></div>`;
             return select;
@@ -513,8 +514,8 @@
 
         function addSocialRow() {
             const tableBody = document.querySelector('#social-media-table tbody');
+            const rowCount = tableBody.rows.length + 1;
             const newRow = tableBody.insertRow();
-            const rowCount = tableBody.rows.length;
             newRow.innerHTML = `
                 <td>
                     <select name="social_pelantar_${rowCount}" class="social-pelantar-select">
@@ -534,17 +535,17 @@
 
         function addPartARow() {
             const tableBody = document.querySelector('#bahagian-a-table tbody');
-            const rowCount = tableBody.rows.length;
-            if (rowCount >= 5) return;
+            const rowCount = tableBody.rows.length + 1;
+            if (rowCount > 5) return;
             
             const newRow = tableBody.insertRow();
             newRow.innerHTML = `
-                <td>${rowCount + 1}</td>
-                <td><input type="text" name="a_jenis_${rowCount + 1}"></td>
-                <td><input type="text" name="a_tajuk_${rowCount + 1}"></td>
-                <td><input type="text" name="a_medium_${rowCount + 1}"></td>
-                <td><input type="url" name="a_pautan_${rowCount + 1}"></td>
-                <td>${createScoreSelect('skor-a')}</td>
+                <td>${rowCount}</td>
+                <td><input type="text" name="a_jenis_${rowCount}"></td>
+                <td><input type="text" name="a_tajuk_${rowCount}"></td>
+                <td><input type="text" name="a_medium_${rowCount}"></td>
+                <td><input type="url" name="a_pautan_${rowCount}"></td>
+                <td>${createScoreSelect('a', rowCount)}</td>
                 <td><button type="button" class="btn remove-row-btn">X</button></td>
             `;
             if (tableBody.rows.length >= 5) {
@@ -554,20 +555,20 @@
 
         function addPartBRow() {
             const tableBody = document.querySelector('#bahagian-b-table tbody');
-            const rowCount = tableBody.rows.length;
-            if (rowCount >= 5) return; // FIX: Hadkan kepada 5 baris
+            const rowCount = tableBody.rows.length + 1;
+            if (rowCount > 5) return;
             
             const newRow = tableBody.insertRow();
             newRow.innerHTML = `
-                <td>${rowCount + 1}</td>
-                <td><input type="text" name="b_program_${rowCount + 1}"></td>
-                <td><input type="text" name="b_peranan_${rowCount + 1}"></td>
-                <td><input type="text" name="b_tarikh_${rowCount + 1}"></td>
-                <td><input type="text" name="b_penganjur_${rowCount + 1}"></td>
-                <td>${createScoreSelect('skor-b')}</td>
+                <td>${rowCount}</td>
+                <td><input type="text" name="b_program_${rowCount}"></td>
+                <td><input type="text" name="b_peranan_${rowCount}"></td>
+                <td><input type="text" name="b_tarikh_${rowCount}"></td>
+                <td><input type="text" name="b_penganjur_${rowCount}"></td>
+                <td>${createScoreSelect('b', rowCount)}</td>
                 <td><button type="button" class="btn remove-row-btn">X</button></td>
             `;
-             if (tableBody.rows.length >= 5) { // FIX: Sembunyikan butang tambah
+             if (tableBody.rows.length >= 5) {
                 document.getElementById('add-bahagian-b-btn').style.display = 'none';
             }
         }
@@ -580,7 +581,7 @@
                 tableBodyC.innerHTML += `
                     <tr>
                         <td>${bilC}</td><td>${kriteria}</td>
-                        <td><div class="select-wrapper"><select name="c_skor_${bilC}" class="skor-c skor-select">${createScoreSelect('skor-c').substring(47)}</select></div></td>
+                        <td><div class="select-wrapper"><select name="c_skor_${bilC}" class="skor-c skor-select">${createScoreSelect('c', bilC).substring(47)}</select></div></td>
                     </tr>`;
                 bilC++;
             });
@@ -603,14 +604,14 @@
 
         // --- FUNGSI PENGIRAAN SKOR AUTOMATIK ---
         function calculateScores() {
-            let totalA = Array.from(document.querySelectorAll('.skor-a')).reduce((sum, el) => sum + parseInt(el.value), 0);
+            let totalA = Array.from(document.querySelectorAll('.a-skor')).reduce((sum, el) => sum + parseInt(el.value), 0);
             document.getElementById('skor-a-rumusan').value = totalA;
-            const peratusA = totalA > 0 ? (totalA / (document.querySelectorAll('.skor-a').length * 5)) * 40 : 0;
+            const peratusA = totalA > 0 ? (totalA / (document.querySelectorAll('.a-skor').length * 5)) * 40 : 0;
             document.getElementById('peratus-a-rumusan').value = peratusA.toFixed(2);
             
-            let totalB = Array.from(document.querySelectorAll('.skor-b')).reduce((sum, el) => sum + parseInt(el.value), 0);
+            let totalB = Array.from(document.querySelectorAll('.b-skor')).reduce((sum, el) => sum + parseInt(el.value), 0);
             document.getElementById('skor-b-rumusan').value = totalB;
-            const peratusB = totalB > 0 ? (totalB / (document.querySelectorAll('.skor-b').length * 5)) * 20 : 0;
+            const peratusB = totalB > 0 ? (totalB / (document.querySelectorAll('.b-skor').length * 5)) * 20 : 0;
             document.getElementById('peratus-b-rumusan').value = peratusB.toFixed(2);
 
             let totalC = Array.from(document.querySelectorAll('.skor-c')).reduce((sum, el) => sum + parseInt(el.value), 0);
@@ -631,7 +632,7 @@
 
         // --- EVENT LISTENERS ---
         document.querySelector('.content').addEventListener('change', function(e) {
-            if (e.target.matches('.skor-a, .skor-b, .skor-c')) { calculateScores(); }
+            if (e.target.matches('.a-skor, .b-skor, .skor-c')) { calculateScores(); }
             if (e.target.classList.contains('social-pelantar-select')) {
                 e.target.closest('td').querySelector('.pelantar-lain-wrapper').style.display = (e.target.value === 'Lain-lain') ? 'block' : 'none';
             }
@@ -731,8 +732,11 @@
 
                 addText('Bahagian A: Perkongsian Amalan', 14, 'bold');
                 const partATableBody = Array.from(document.querySelectorAll('#bahagian-a-table tbody tr')).map(row => [
-                    row.cells[0].innerText, row.querySelector('input[name^="a_jenis_"]').value, row.querySelector('input[name^="a_tajuk_"]').value,
-                    row.querySelector('input[name^="a_medium_"]').value, row.querySelector('.skor-a').value
+                    row.cells[0].innerText,
+                    row.querySelector('input[name^="a_jenis_"]').value,
+                    row.querySelector('input[name^="a_tajuk_"]').value,
+                    row.querySelector('input[name^="a_medium_"]').value,
+                    row.querySelector('.a-skor').value
                 ]);
                 if (partATableBody.length > 0) {
                     doc.autoTable({ head: [['Bil', 'Jenis', 'Tajuk', 'Medium', 'Skor']], body: partATableBody, startY: y });
@@ -741,8 +745,11 @@
 
                 addText('Bahagian B: Sumbangan Khidmat Profesional', 14, 'bold');
                 const partBTableBody = Array.from(document.querySelectorAll('#bahagian-b-table tbody tr')).map(row => [
-                    row.cells[0].innerText, row.querySelector('input[name^="b_program_"]').value, row.querySelector('input[name^="b_peranan_"]').value,
-                    row.querySelector('input[name^="b_tarikh_"]').value, row.querySelector('.skor-b').value
+                    row.cells[0].innerText,
+                    row.querySelector('input[name^="b_program_"]').value,
+                    row.querySelector('input[name^="b_peranan_"]').value,
+                    row.querySelector('input[name^="b_tarikh_"]').value,
+                    row.querySelector('.b-skor').value
                 ]);
                 if (partBTableBody.length > 0) {
                     doc.autoTable({ head: [['Bil', 'Program', 'Peranan', 'Tarikh', 'Skor']], body: partBTableBody, startY: y });
@@ -751,7 +758,9 @@
                 
                 addText('Bahagian C: Dimensi Kualiti', 14, 'bold');
                 const partCTableBody = Array.from(document.querySelectorAll('#table-c tbody tr:not(.header-row)')).map(row => [
-                    row.cells[0].innerText, row.cells[1].innerText, row.querySelector('.skor-c').value
+                    row.cells[0].innerText,
+                    row.cells[1].innerText,
+                    row.querySelector('.skor-c').value
                 ]);
                 if (partCTableBody.length > 0) {
                     doc.autoTable({ head: [['Bil', 'Kriteria', 'Skor']], body: partCTableBody, startY: y });

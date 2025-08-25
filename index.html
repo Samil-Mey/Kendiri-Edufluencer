@@ -247,8 +247,8 @@
             transform: translateY(-2px);
         }
         .btn:disabled {
-            background-color: #bdc3c7;
-            background-image: none;
+            background-color: #bdc3c7 !important;
+            background-image: none !important;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
@@ -689,122 +689,109 @@
             const loader = document.getElementById('pdf-loader');
             loader.style.display = 'flex';
 
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const docName = document.getElementById('nama').value || 'responden';
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const docName = document.getElementById('nama').value || 'responden';
 
-            // Fungsi untuk menambah teks dan menguruskan posisi Y
-            let y = 15;
-            const addText = (text, size = 10, style = 'normal', indent = 10) => {
-                if (y > 280) { doc.addPage(); y = 15; }
-                doc.setFontSize(size).setFont('helvetica', style);
-                doc.text(text, indent, y);
-                y += (size * 0.5);
-            };
+                let y = 15;
+                const addText = (text, size = 10, style = 'normal', indent = 10) => {
+                    if (y > 280) { doc.addPage(); y = 15; }
+                    doc.setFontSize(size).setFont('helvetica', style);
+                    doc.text(text, indent, y);
+                    y += (size * 0.5);
+                };
 
-            // Mula membina PDF
-            addText('Borang Penilaian Kendiri Edufluencer KPM', 18, 'bold', 10);
-            y += 5;
+                addText('Borang Penilaian Kendiri Edufluencer KPM', 18, 'bold', 10);
+                y += 5;
 
-            // Bahagian Maklumat Diri
-            addText('Maklumat Peribadi', 14, 'bold');
-            const maklumat = {
-                "Nama": "nama", "No. KP": "nokp", "Jawatan": "jawatan", "Gred": "gred",
-                "Negeri": "negeri", "Nama Sekolah": "sekolah", "Kategori": "kategori"
-            };
-            for (const [label, id] of Object.entries(maklumat)) {
-                addText(`${label}: ${document.getElementById(id).value}`);
-            }
-            if (document.getElementById('kategori').value === 'Lain-lain') {
-                addText(`Kategori (Lain-lain): ${document.getElementById('kategori-lain-input').value}`);
-            }
-            y += 5;
-
-            // Jadual Media Sosial
-            const socialTableBody = [];
-            document.querySelectorAll('#social-media-table tbody tr').forEach(row => {
-                const pelantarSelect = row.querySelector('.social-pelantar-select');
-                let pelantar = pelantarSelect.value;
-                if (pelantar === 'Lain-lain') {
-                    pelantar = row.querySelector('input[name^="social_pelantar_lain"]').value;
+                addText('Maklumat Peribadi', 14, 'bold');
+                const maklumat = {
+                    "Nama": "nama", "No. KP": "nokp", "Jawatan": "jawatan", "Gred": "gred",
+                    "Negeri": "negeri", "Nama Sekolah": "sekolah", "Kategori": "kategori"
+                };
+                for (const [label, id] of Object.entries(maklumat)) {
+                    addText(`${label}: ${document.getElementById(id).value}`);
                 }
-                socialTableBody.push([
-                    pelantar,
-                    row.querySelector('input[name^="social_akaun"]').value,
-                    row.querySelector('input[name^="social_followers"]').value
-                ]);
-            });
-            if (socialTableBody.length > 0) {
-                doc.autoTable({ head: [['Pelantar', 'Nama Akaun', 'Followers']], body: socialTableBody, startY: y });
-                y = doc.autoTable.previous.finalY + 10;
-            }
+                if (document.getElementById('kategori').value === 'Lain-lain') {
+                    addText(`Kategori (Lain-lain): ${document.getElementById('kategori-lain-input').value}`);
+                }
+                y += 5;
 
-            // Jadual Bahagian A
-            addText('Bahagian A: Perkongsian Amalan', 14, 'bold');
-            const partATableBody = [];
-            document.querySelectorAll('#bahagian-a-table tbody tr').forEach(row => {
-                partATableBody.push([
+                const socialTableBody = Array.from(document.querySelectorAll('#social-media-table tbody tr')).map(row => {
+                    const pelantarSelect = row.querySelector('.social-pelantar-select');
+                    let pelantar = pelantarSelect.value;
+                    if (pelantar === 'Lain-lain') {
+                        pelantar = row.querySelector('input[name^="social_pelantar_lain"]').value;
+                    }
+                    return [
+                        pelantar,
+                        row.querySelector('input[name^="social_akaun"]').value,
+                        row.querySelector('input[name^="social_followers"]').value
+                    ];
+                });
+
+                if (socialTableBody.length > 0) {
+                    doc.autoTable({ head: [['Pelantar', 'Nama Akaun', 'Followers']], body: socialTableBody, startY: y });
+                    y = doc.autoTable.previous.finalY + 10;
+                }
+
+                addText('Bahagian A: Perkongsian Amalan', 14, 'bold');
+                const partATableBody = Array.from(document.querySelectorAll('#bahagian-a-table tbody tr')).map(row => [
                     row.cells[0].innerText,
                     row.querySelector('input[name^="a_jenis"]').value,
                     row.querySelector('input[name^="a_tajuk"]').value,
                     row.querySelector('input[name^="a_medium"]').value,
                     row.querySelector('select[name^="a_skor"]').value
                 ]);
-            });
-            if (partATableBody.length > 0) {
-                doc.autoTable({ head: [['Bil', 'Jenis', 'Tajuk', 'Medium', 'Skor']], body: partATableBody, startY: y });
-                y = doc.autoTable.previous.finalY + 10;
-            }
+                if (partATableBody.length > 0) {
+                    doc.autoTable({ head: [['Bil', 'Jenis', 'Tajuk', 'Medium', 'Skor']], body: partATableBody, startY: y });
+                    y = doc.autoTable.previous.finalY + 10;
+                }
 
-            // Jadual Bahagian B
-            addText('Bahagian B: Sumbangan Khidmat Profesional', 14, 'bold');
-            const partBTableBody = [];
-            document.querySelectorAll('#bahagian-b-table tbody tr').forEach(row => {
-                partBTableBody.push([
+                addText('Bahagian B: Sumbangan Khidmat Profesional', 14, 'bold');
+                const partBTableBody = Array.from(document.querySelectorAll('#bahagian-b-table tbody tr')).map(row => [
                     row.cells[0].innerText,
                     row.querySelector('input[name^="b_program"]').value,
                     row.querySelector('input[name^="b_peranan"]').value,
                     row.querySelector('input[name^="b_tarikh"]').value,
                     row.querySelector('select[name^="b_skor"]').value
                 ]);
-            });
-            if (partBTableBody.length > 0) {
-                doc.autoTable({ head: [['Bil', 'Program', 'Peranan', 'Tarikh', 'Skor']], body: partBTableBody, startY: y });
-                y = doc.autoTable.previous.finalY + 10;
-            }
-            
-            // Jadual Bahagian C
-            addText('Bahagian C: Dimensi Kualiti', 14, 'bold');
-            const partCTableBody = [];
-            document.querySelectorAll('#table-c tbody tr:not(.header-row)').forEach(row => {
-                partCTableBody.push([
+                if (partBTableBody.length > 0) {
+                    doc.autoTable({ head: [['Bil', 'Program', 'Peranan', 'Tarikh', 'Skor']], body: partBTableBody, startY: y });
+                    y = doc.autoTable.previous.finalY + 10;
+                }
+                
+                addText('Bahagian C: Dimensi Kualiti', 14, 'bold');
+                const partCTableBody = Array.from(document.querySelectorAll('#table-c tbody tr:not(.header-row)')).map(row => [
                     row.cells[0].innerText,
                     row.cells[1].innerText,
                     row.querySelector('.skor-c').value
                 ]);
-            });
-            if (partCTableBody.length > 0) {
-                doc.autoTable({ head: [['Bil', 'Kriteria', 'Skor']], body: partCTableBody, startY: y });
-                y = doc.autoTable.previous.finalY + 10;
-            }
+                if (partCTableBody.length > 0) {
+                    doc.autoTable({ head: [['Bil', 'Kriteria', 'Skor']], body: partCTableBody, startY: y });
+                    y = doc.autoTable.previous.finalY + 10;
+                }
 
-            // Rumusan Skor
-            if (y > 220) { doc.addPage(); y = 15; }
-            addText('Rumusan Skor Keseluruhan', 14, 'bold');
-            const rumusanData = [
-                ['Bahagian A', document.getElementById('skor-a-rumusan').value, document.getElementById('peratus-a-rumusan').value + ' %'],
-                ['Bahagian B', document.getElementById('skor-b-rumusan').value, document.getElementById('peratus-b-rumusan').value + ' %'],
-                ['Bahagian C', document.getElementById('skor-c-rumusan').value, document.getElementById('peratus-c-rumusan').value + ' %'],
-            ];
-            doc.autoTable({ head: [['Komponen', 'Skor Diperoleh', 'Peratus (%)']], body: rumusanData, startY: y });
-            y = doc.autoTable.previous.finalY + 5;
-            addText(`Jumlah Keseluruhan: ${document.getElementById('jumlah-keseluruhan').value} %`, 12, 'bold');
-            addText(`Tahap: ${document.getElementById('tahap-pencapaian').value}`, 12, 'bold');
-            y += 10;
-            
-            // Simpan PDF
-            doc.save(`Borang Penilaian Kendiri - ${docName}.pdf`);
-            loader.style.display = 'none';
+                if (y > 220) { doc.addPage(); y = 15; }
+                addText('Rumusan Skor Keseluruhan', 14, 'bold');
+                const rumusanData = [
+                    ['Bahagian A', document.getElementById('skor-a-rumusan').value, document.getElementById('peratus-a-rumusan').value + ' %'],
+                    ['Bahagian B', document.getElementById('skor-b-rumusan').value, document.getElementById('peratus-b-rumusan').value + ' %'],
+                    ['Bahagian C', document.getElementById('skor-c-rumusan').value, document.getElementById('peratus-c-rumusan').value + ' %'],
+                ];
+                doc.autoTable({ head: [['Komponen', 'Skor Diperoleh', 'Peratus (%)']], body: rumusanData, startY: y });
+                y = doc.autoTable.previous.finalY + 5;
+                addText(`Jumlah Keseluruhan: ${document.getElementById('jumlah-keseluruhan').value} %`, 12, 'bold');
+                addText(`Tahap: ${document.getElementById('tahap-pencapaian').value}`, 12, 'bold');
+                
+                doc.save(`Borang Penilaian Kendiri - ${docName}.pdf`);
+            } catch (error) {
+                console.error("Ralat semasa menjana PDF:", error);
+                alert("Maaf, terdapat ralat semasa menjana PDF. Sila cuba lagi.");
+            } finally {
+                loader.style.display = 'none';
+            }
         });
 
         // --- LOGIK PENGHANTARAN BORANG ---
@@ -818,7 +805,7 @@
             submitStatus.style.color = '#333';
             
             fetch(scriptURL, { method: 'POST', body: formData })
-                .then(response => response.json()) // Tukar kepada .json() untuk lihat respons dari skrip
+                .then(response => response.json()) 
                 .then(data => {
                     if (data.result === 'success') {
                         submitStatus.textContent = 'Borang berjaya dihantar! Terima kasih.';
@@ -832,7 +819,7 @@
                         validateForm();
                         document.querySelector('.nav-link[href="#pengenalan"]').click();
                     } else {
-                        throw new Error(data.error || 'Penghantaran gagal.');
+                        throw new Error(data.error || 'Penghantaran gagal dari skrip.');
                     }
                 })
                 .catch(error => {
@@ -847,7 +834,7 @@
         addPartARow();
         addPartBRow();
         calculateScores();
-        validateForm(); // Panggil sekali untuk tetapkan keadaan awal butang
+        validateForm(); 
     });
     </script>
 </body>

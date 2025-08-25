@@ -540,8 +540,10 @@
             const newRow = tableBody.insertRow();
             newRow.innerHTML = `
                 <td>${rowCount + 1}</td>
-                <td><input type="text" name="a_jenis_${rowCount + 1}"></td><td><input type="text" name="a_tajuk_${rowCount + 1}"></td>
-                <td><input type="text" name="a_medium_${rowCount + 1}"></td><td><input type="url" name="a_pautan_${rowCount + 1}"></td>
+                <td><input type="text" name="a_jenis_${rowCount + 1}"></td>
+                <td><input type="text" name="a_tajuk_${rowCount + 1}"></td>
+                <td><input type="text" name="a_medium_${rowCount + 1}"></td>
+                <td><input type="url" name="a_pautan_${rowCount + 1}"></td>
                 <td>${createScoreSelect('skor-a')}</td>
                 <td><button type="button" class="btn remove-row-btn">X</button></td>
             `;
@@ -553,14 +555,21 @@
         function addPartBRow() {
             const tableBody = document.querySelector('#bahagian-b-table tbody');
             const rowCount = tableBody.rows.length;
+            if (rowCount >= 5) return; // FIX: Hadkan kepada 5 baris
+            
             const newRow = tableBody.insertRow();
             newRow.innerHTML = `
                 <td>${rowCount + 1}</td>
-                <td><input type="text" name="b_program_${rowCount + 1}"></td><td><input type="text" name="b_peranan_${rowCount + 1}"></td>
-                <td><input type="text" name="b_tarikh_${rowCount + 1}"></td><td><input type="text" name="b_penganjur_${rowCount + 1}"></td>
+                <td><input type="text" name="b_program_${rowCount + 1}"></td>
+                <td><input type="text" name="b_peranan_${rowCount + 1}"></td>
+                <td><input type="text" name="b_tarikh_${rowCount + 1}"></td>
+                <td><input type="text" name="b_penganjur_${rowCount + 1}"></td>
                 <td>${createScoreSelect('skor-b')}</td>
                 <td><button type="button" class="btn remove-row-btn">X</button></td>
             `;
+             if (tableBody.rows.length >= 5) { // FIX: Sembunyikan butang tambah
+                document.getElementById('add-bahagian-b-btn').style.display = 'none';
+            }
         }
 
         const tableBodyC = document.querySelector('#table-c tbody');
@@ -624,7 +633,7 @@
         document.querySelector('.content').addEventListener('change', function(e) {
             if (e.target.matches('.skor-a, .skor-b, .skor-c')) { calculateScores(); }
             if (e.target.classList.contains('social-pelantar-select')) {
-                e.target.nextElementSibling.style.display = (e.target.value === 'Lain-lain') ? 'block' : 'none';
+                e.target.closest('td').querySelector('.pelantar-lain-wrapper').style.display = (e.target.value === 'Lain-lain') ? 'block' : 'none';
             }
         });
         
@@ -640,9 +649,10 @@
             if (e.target.classList.contains('remove-row-btn')) {
                 const row = e.target.closest('tr');
                 const tableBody = row.parentElement;
+                const table = tableBody.parentElement;
                 row.remove();
-                if (tableBody.parentElement.id === 'bahagian-a-table') {
-                    document.getElementById('add-bahagian-a-btn').style.display = 'inline-flex';
+                if (table.id === 'bahagian-a-table' || table.id === 'bahagian-b-table') {
+                    document.getElementById(`add-${table.id.replace('-table', '-btn')}`).style.display = 'inline-flex';
                     tableBody.querySelectorAll('tr').forEach((r, index) => { r.cells[0].textContent = index + 1; });
                 }
                 calculateScores();
@@ -679,10 +689,8 @@
             });
             submitBtn.disabled = !allValid;
         }
-        requiredFields.forEach(field => {
-            field.addEventListener('input', validateForm);
-            field.addEventListener('change', validateForm);
-        });
+        document.getElementById('pengesahan').addEventListener('input', validateForm);
+        document.getElementById('pengesahan').addEventListener('change', validateForm);
 
         // --- LOGIK MUAT TURUN PDF (VERSI DIPERBAIKI) ---
         document.getElementById('download-pdf-btn').addEventListener('click', function() {
@@ -706,31 +714,16 @@
                 y += 5;
 
                 addText('Maklumat Peribadi', 14, 'bold');
-                const maklumat = {
-                    "Nama": "nama", "No. KP": "nokp", "Jawatan": "jawatan", "Gred": "gred",
-                    "Negeri": "negeri", "Nama Sekolah": "sekolah", "Kategori": "kategori"
-                };
-                for (const [label, id] of Object.entries(maklumat)) {
-                    addText(`${label}: ${document.getElementById(id).value}`);
-                }
-                if (document.getElementById('kategori').value === 'Lain-lain') {
-                    addText(`Kategori (Lain-lain): ${document.getElementById('kategori-lain-input').value}`);
-                }
+                const maklumat = { "Nama": "nama", "No. KP": "nokp", "Jawatan": "jawatan", "Gred": "gred", "Negeri": "negeri", "Nama Sekolah": "sekolah", "Kategori": "kategori" };
+                for (const [label, id] of Object.entries(maklumat)) { addText(`${label}: ${document.getElementById(id).value}`); }
+                if (document.getElementById('kategori').value === 'Lain-lain') { addText(`Kategori (Lain-lain): ${document.getElementById('kategori-lain-input').value}`); }
                 y += 5;
 
                 const socialTableBody = Array.from(document.querySelectorAll('#social-media-table tbody tr')).map(row => {
-                    const pelantarSelect = row.querySelector('.social-pelantar-select');
-                    let pelantar = pelantarSelect.value;
-                    if (pelantar === 'Lain-lain') {
-                        pelantar = row.querySelector('input[name^="social_pelantar_lain"]').value;
-                    }
-                    return [
-                        pelantar,
-                        row.querySelector('input[name^="social_akaun"]').value,
-                        row.querySelector('input[name^="social_followers"]').value
-                    ];
+                    let pelantar = row.querySelector('.social-pelantar-select').value;
+                    if (pelantar === 'Lain-lain') { pelantar = row.querySelector('input[name^="social_pelantar_lain"]').value; }
+                    return [pelantar, row.querySelector('input[name^="social_akaun"]').value, row.querySelector('input[name^="social_followers"]').value];
                 });
-
                 if (socialTableBody.length > 0) {
                     doc.autoTable({ head: [['Pelantar', 'Nama Akaun', 'Followers']], body: socialTableBody, startY: y });
                     y = doc.autoTable.previous.finalY + 10;
@@ -738,11 +731,8 @@
 
                 addText('Bahagian A: Perkongsian Amalan', 14, 'bold');
                 const partATableBody = Array.from(document.querySelectorAll('#bahagian-a-table tbody tr')).map(row => [
-                    row.cells[0].innerText,
-                    row.querySelector('input[name^="a_jenis"]').value,
-                    row.querySelector('input[name^="a_tajuk"]').value,
-                    row.querySelector('input[name^="a_medium"]').value,
-                    row.querySelector('select[name^="a_skor"]').value
+                    row.cells[0].innerText, row.querySelector('input[name^="a_jenis_"]').value, row.querySelector('input[name^="a_tajuk_"]').value,
+                    row.querySelector('input[name^="a_medium_"]').value, row.querySelector('.skor-a').value
                 ]);
                 if (partATableBody.length > 0) {
                     doc.autoTable({ head: [['Bil', 'Jenis', 'Tajuk', 'Medium', 'Skor']], body: partATableBody, startY: y });
@@ -751,11 +741,8 @@
 
                 addText('Bahagian B: Sumbangan Khidmat Profesional', 14, 'bold');
                 const partBTableBody = Array.from(document.querySelectorAll('#bahagian-b-table tbody tr')).map(row => [
-                    row.cells[0].innerText,
-                    row.querySelector('input[name^="b_program"]').value,
-                    row.querySelector('input[name^="b_peranan"]').value,
-                    row.querySelector('input[name^="b_tarikh"]').value,
-                    row.querySelector('select[name^="b_skor"]').value
+                    row.cells[0].innerText, row.querySelector('input[name^="b_program_"]').value, row.querySelector('input[name^="b_peranan_"]').value,
+                    row.querySelector('input[name^="b_tarikh_"]').value, row.querySelector('.skor-b').value
                 ]);
                 if (partBTableBody.length > 0) {
                     doc.autoTable({ head: [['Bil', 'Program', 'Peranan', 'Tarikh', 'Skor']], body: partBTableBody, startY: y });
@@ -764,9 +751,7 @@
                 
                 addText('Bahagian C: Dimensi Kualiti', 14, 'bold');
                 const partCTableBody = Array.from(document.querySelectorAll('#table-c tbody tr:not(.header-row)')).map(row => [
-                    row.cells[0].innerText,
-                    row.cells[1].innerText,
-                    row.querySelector('.skor-c').value
+                    row.cells[0].innerText, row.cells[1].innerText, row.querySelector('.skor-c').value
                 ]);
                 if (partCTableBody.length > 0) {
                     doc.autoTable({ head: [['Bil', 'Kriteria', 'Skor']], body: partCTableBody, startY: y });

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borang Penilaian Kendiri Edufluencer KPM</title>
+    <!-- Pustaka untuk Jana PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* Import Font dari Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        /* Reset Asas & Styling Utama Body */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            background-color: #ffffff;
+        }
+
+        /* Sidebar / Navigasi Tab di Kiri */
+        .sidebar {
+            width: 280px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 25px;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #34495e;
+        }
+        .sidebar-logo img {
+            max-width: 80%;
+            height: auto;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li a {
+            display: block;
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #34495e;
+            transform: translateX(5px);
+        }
+
+        .sidebar ul li a.active {
+            background-color: #3498db; /* Warna utama biru */
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        /* Kandungan Utama di Kanan */
+        .content {
+            flex-grow: 1;
+            margin-left: 280px; /* Lebar sidebar */
+            padding: 40px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Header Logo */
+        .header-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header-logo img {
+            max-width: 300px;
+            height: auto;
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #3498db; /* Warna utama biru */
+            padding-bottom: 10px;
+        }
+
+        /* Styling Elemen Borang */
+        .form-group, .form-group-checkbox {
+            margin-bottom: 25px;
+        }
+
+        .form-group label, .form-group-checkbox label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="url"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="url"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #3498db; /* Warna utama biru */
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        input:disabled, select:disabled, textarea:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Styling Jadual */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #34495e;
+            color: white;
+            font-weight: 600;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        tr.header-row td {
+            background-color: #2980b9; /* Warna biru gelap */
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .rubric-legend {
+            background-color: #eaf2f8; /* Warna biru cair */
+            border-left: 5px solid #3498db; /* Warna utama biru */
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        /* Custom Select Dropdown for Skor Bahagian C */
+        .select-wrapper {
+            position: relative;
+            width: 100px;
+        }
+        .skor-c-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: transparent;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 12px;
+            width: 100%;
+            cursor: pointer;
+        }
+        .select-wrapper::after {
+            content: '▼';
+            font-size: 0.8rem;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        /* Butang */
+        .btn {
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .add-row-btn {
+            background: #3498db;
+            display: inline-flex;
+            align-items: center;
+        }
+        .add-row-btn:hover { box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4); }
+        .remove-row-btn {
+            background: #e74c3c;
+        }
+        .remove-row-btn:hover { box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4); }
+
+        .section-controls {
+            margin-top: 20px;
+        }
+        .section-lock-btn { background: #5dade2; } /* Biru lebih cerah */
+        .section-lock-btn:hover { box-shadow: 0 4px 15px rgba(93, 173, 226, 0.4); }
+        .section-unlock-btn { background: #f39c12; display: none; }
+        .section-unlock-btn:hover { box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4); }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            padding: 15px 30px;
+            font-size: 1.1rem;
+        }
+        .submit-btn:hover {
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+        }
+        
+        .pdf-btn {
+            background: #7f8c8d;
+        }
+        .pdf-btn:hover {
+            background: #95a5a6;
+            box-shadow: 0 4px 15px rgba(127, 140, 141, 0.4);
+        }
+
+        /* Info Box & Status Mesej */
+        .info-box {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .info-box h4 { color: #2980b9; margin-top: 15px; }
+        #submit-status { margin-top: 15px; font-weight: bold; }
+        
+        /* Loading Overlay for PDF Generation */
+        #pdf-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            z-index: 1000;
+        }
+        
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div id="pdf-loader">Menjana PDF, sila tunggu...</div>
+    <div class="container">
+        <!-- Navigasi Tab di Sebelah Kiri -->
+        <nav class="sidebar">
+            <div class="sidebar-logo">
+                <img src="Imej1.png" alt="Logo Sidebar">
+            </div>
+            <ul>
+                <li><a href="#pengenalan" class="nav-link active">Pengenalan</a></li>
+                <li><a href="#maklumat-diri" class="nav-link">Maklumat Diri</a></li>
+                <li><a href="#bahagian-a" class="nav-link">Bahagian A: Perkongsian</a></li>
+                <li><a href="#bahagian-b" class="nav-link">Bahagian B: Sumbangan</a></li>
+                <li><a href="#bahagian-c" class="nav-link">Bahagian C: Dimensi Kualiti</a></li>
+                <li><a href="#rumusan" class="nav-link">Rumusan Skor</a></li>
+                <li><a href="#pengesahan" class="nav-link">Pengesahan & Hantar</a></li>
+            </ul>
+        </nav>
+
+        <!-- Kandungan Borang di Sebelah Kanan -->
+        <main class="content">
+            <form id="edufluencer-form">
+                
+                <!-- =============== Bahagian Pengenalan =============== -->
+                <section id="pengenalan" class="tab-content active">
+                    <div class="header-logo">
+                        <img src="Imej2.gif" alt="Logo Organisasi">
+                    </div>
+                    <h1>Borang Penilaian Kendiri Edufluencer KPM</h1>
+                    <div class="info-box">
+                        <h4>1. Tujuan</h4><p>Borang ini dibangunkan sebagai instrumen penilaian kendiri bagi Edufluencer Kementerian Pendidikan (KPM) untuk menilai tahap profesionalisme, kualiti kandungan, komunikasi dan penyampaian, impak, inovasi serta pembangunan berterusan dalam peranan mereka sebagai pendidik digital.</p>
+                        <h4>2. Objektif</h4>
+                        <ul>
+                            <li>Menilai secara menyeluruh kekuatan dan kelemahan diri sebagai Edufluencer iaitu pengetahuan, kemahiran, nilai serta tahap profesionalisme.</li>
+                            <li>Mengenal pasti aspek-aspek utama yang memerlukan penambahbaikan bagi meningkatkan kualiti kandungan, keberkesanan penyampaian, impak kepada audiens serta inovasi dalam amalan digital.</li>
+                        </ul>
+                         <h4>5. Kerahsiaan</h4><p>Penilaian kendiri ini adalah untuk kegunaan peribadi dan pembangunan profesional. Maklumat yang diisi tidak akan menjejaskan penilaian rasmi kecuali diminta untuk rujukan oleh pihak KPM.</p>
+                    </div>
+                </section>
+
+                <!-- =============== Bahagian Maklumat Diri =============== -->
+                <section id="maklumat-diri" class="tab-content">
+                    <h2>Maklumat Peribadi</h2>
+                    <div class="form-group"><label for="nama">Nama:</label><input type="text" id="nama" name="nama" required></div>
+                    <div class="form-group"><label for="nokp">No. KP:</label><input type="text" id="nokp" name="nokp" required></div>
+                    <div class="form-group"><label for="jawatan">Jawatan:</label><input type="text" id="jawatan" name="jawatan"></div>
+                    <div class="form-group"><label for="gred">Gred:</label><input type="text" id="gred" name="gred"></div>
+                    <div class="form-group"><label for="negeri">Negeri:</label><input type="text" id="negeri" name="negeri"></div>
+                    <div class="form-group"><label for="sekolah">Nama Sekolah:</label><input type="text" id="sekolah" name="sekolah"></div>
+                    <div class="form-group">
+                        <label for="kategori">Kategori:</label>
+                        <select id="kategori" name="kategori">
+                            <option value="Pra sekolah">Pra sekolah</option><option value="Sekolah Rendah">Sekolah Rendah</option><option value="Sekolah Menengah">Sekolah Menengah</option><option value="Lain-lain">DLL (Nyatakan)</option>
+                        </select>
+                        <div id="kategori-lain-wrapper" style="display: none; margin-top: 10px;">
+                            <input type="text" id="kategori-lain-input" name="kategori_lain" placeholder="Sila nyatakan kategori">
+                        </div>
+                    </div>
+                    <h4>Media Sosial</h4>
+                    <table id="social-media-table">
+                        <thead><tr><th>Pelantar</th><th>Nama Akaun</th><th>Bilangan Followers</th><th>Padam</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                    <button type="button" class="btn add-row-btn" id="add-social-btn">+ Tambah Media Sosial</button>
+                    <div class="section-controls">
+                        <button type="button" class="btn section-lock-btn" data-section="maklumat-diri">Selesai</button>
+                        <button type="button" class="btn section-unlock-btn" data-section="maklumat-diri">Kemaskini</button>
+                    </div>
+                </section>
+
+                <!-- =============== Bahagian A: Perkongsian Amalan (40%) =============== -->
+                <section id="bahagian-a" class="tab-content">
+                    <h2>BAHAGIAN A: PERKONGSIAN AMALAN (40%)</h2>
+                    <p><strong>Arahan:</strong> Sila senaraikan sehingga lima (5) aktiviti dan bukti perkongsian amalan yang telah dilaksanakan.</p>
+                    <table id="bahagian-a-table">
+                        <thead><tr><th>Bil</th><th>Jenis Perkongsian</th><th>Tajuk</th><th>Medium</th><th>Pautan/Bukti</th><th>Skor</th><th>Padam</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                    <button type="button" class="btn add-row-btn" id="add-bahagian-a-btn">+ Tambah Aktiviti</button>
+                    <div class="section-controls">
+                        <button type="button" class="btn section-lock-btn" data-section="bahagian-a">Selesai</button>
+                        <button type="button" class="btn section-unlock-btn" data-section="bahagian-a">Kemaskini</button>
+                    </div>
+                </section>
+
+                <!-- =============== Bahagian B: Sumbangan Profesional (20%) =============== -->
+                <section id="bahagian-b" class="tab-content">
+                     <h2>BAHAGIAN B: SUMBANGAN KHIDMAT PROFESIONAL (20%)</h2>
+                     <p><strong>Arahan:</strong> Sila nyatakan bentuk sumbangan khidmat profesional yang telah diberikan.</p>
+                     <table id="bahagian-b-table">
+                        <thead><tr><th>Bil</th><th>Program</th><th>Peranan</th><th>Tarikh/Tahun</th><th>Penganjur</th><th>Skor</th><th>Padam</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                    <button type="button" class="btn add-row-btn" id="add-bahagian-b-btn">+ Tambah Sumbangan</button>
+                    <div class="section-controls">
+                        <button type="button" class="btn section-lock-btn" data-section="bahagian-b">Selesai</button>
+                        <button type="button" class="btn section-unlock-btn" data-section="bahagian-b">Kemaskini</button>
+                    </div>
+                </section>
+
+                <!-- =============== Bahagian C: Dimensi Kualiti (40%) =============== -->
+                <section id="bahagian-c" class="tab-content">
+                     <h2>BAHAGIAN C: DIMENSI KUALITI (40%)</h2>
+                     <p><strong>Arahan:</strong> Tandakan pada ruangan 1–5 berdasarkan tahap pencapaian anda.</p>
+                     <div class="rubric-legend"><strong>Skala: 1</strong>=Sangat Lemah, <strong>2</strong>=Lemah, <strong>3</strong>=Sederhana, <strong>4</strong>=Baik, <strong>5</strong>=Cemerlang</div>
+                    <table id="table-c">
+                        <thead><tr><th>Bil</th><th>Kriteria</th><th>Skor (1-5)</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                     <p><strong>Jumlah Markah Diperoleh: <span id="jumlah-c">0</span> / 65</strong></p>
+                </section>
+                
+                 <!-- =============== Bahagian Rumusan Skor =============== -->
+                <section id="rumusan" class="tab-content">
+                    <h2>RUMUSAN SKOR KESELURUHAN</h2>
+                    <table>
+                        <thead><tr><th>Komponen</th><th>Skor Diperoleh</th><th>Peratus Skor Diperolehi (%)</th></tr></thead>
+                        <tbody>
+                            <tr><td>BAHAGIAN A (40%)</td><td><input type="text" id="skor-a-rumusan" readonly></td><td><input type="text" id="peratus-a-rumusan" readonly></td></tr>
+                            <tr><td>BAHAGIAN B (20%)</td><td><input type="text" id="skor-b-rumusan" readonly></td><td><input type="text" id="peratus-b-rumusan" readonly></td></tr>
+                            <tr><td>BAHAGIAN C (40%)</td><td><input type="text" id="skor-c-rumusan" readonly></td><td><input type="text" id="peratus-c-rumusan" readonly></td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr><td><strong>JUMLAH KESELURUHAN (%)</strong></td><td colspan="2"><input type="text" id="jumlah-keseluruhan" readonly></td></tr>
+                            <tr><td><strong>TAHAP</strong></td><td colspan="2"><input type="text" id="tahap-pencapaian" readonly></td></tr>
+                        </tfoot>
+                    </table>
+                     <div class="info-box">
+                        <h4>Penerangan Tahap</h4>
+                        <p><strong>TopInfluencer (90-100):</strong> Edufluencer berimpak tinggi yang konsisten, inovatif, dan menjadi rujukan utama dalam komuniti pendidikan.</p>
+                        <p><strong>Trendsetter (80-89.99):</strong> Edufluencer kreatif dan inovatif yang mampu mencetuskan idea baharu serta menginspirasi warga pendidikan.</p>
+                        <p><strong>Next Gen (60-79.99):</strong> Edufluencer aktif dengan kandungan asas yang bermanfaat dan berpotensi berkembang ke tahap lebih tinggi.</p>
+                        <p><strong>Starter (0-59.99):</strong> Edufluencer baharu yang masih memerlukan bimbingan untuk meningkatkan mutu kandungan dan impak pendidikan.</p>
+                    </div>
+                </section>
+
+                <!-- =============== Bahagian Pengesahan & Hantar =============== -->
+                <section id="pengesahan" class="tab-content">
+                    <h2>Pengesahan dan Akuan</h2>
+                    <div class="form-group-checkbox">
+                        <input type="checkbox" id="akuan" name="akuan" value="YA" required style="width: auto; margin-right: 10px;">
+                        <label for="akuan">Saya mengesahkan bahawa semua maklumat dan bukti yang dikemukakan adalah benar dan tepat.</label>
+                    </div>
+                    <div class="form-group"><label for="nama_pengesahan">Nama:</label><input type="text" id="nama_pengesahan" name="nama_pengesahan" readonly></div>
+                    <div class="form-group"><label for="email_pengesahan">Emel:</label><input type="email" id="email_pengesahan" name="email_pengesahan" required></div>
+                    <div class="form-group"><label for="telefon_pengesahan">No. Telefon:</label><input type="tel" id="telefon_pengesahan" name="telefon_pengesahan" required></div>
+                    <div class="form-group"><label for="tarikh_pengesahan">Tarikh:</label><input type="text" id="tarikh_pengesahan" name="tarikh_pengesahan" readonly></div>
+                    <button type="button" id="download-pdf-btn" class="btn pdf-btn">Muat Turun PDF</button>
+                    <button type="submit" class="btn submit-btn">Hantar</button>
+                    <p id="submit-status"></p>
+                </section>
+            </form>
+            
+            <footer>
+                <p>Penafian: Borang ini adalah untuk tujuan penilaian kendiri dan pembangunan profesional sahaja. Maklumat yang diberikan adalah sulit.</p>
+                <p>MeY || ©2025</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const { jsPDF } = window.jspdf;
+        
+        // --- DATA UNTUK JADUAL BAHAGIAN C ---
+        const kriteriaC = {
+            "PROFESIONALISME": ["Menjaga etika sebagai pendidik dalam setiap kandungan yang dihasilkan", "Mematuhi dasar, garis panduan dan sensitiviti Kementerian Pendidikan", "Menghasilkan kandungan yang berinovatif dan bermanfaat"],
+            "KANDUNGAN": ["Kandungan bahan yang disediakan jelas dan teratur", "Kandungan mengandungi elemen kreatif dan inovatif yang menarik minat untuk belajar.", "Kandungan yang dikongsi berkaitan pengajaran dan pembelajaran (PdP)", "Kandungan yang dikongsi adalah berhubung dengan keperluan pendidikan semasa"],
+            "KOMUNIKASI": ["Penyampaian mesej jelas dan mudah difahami", "Menghormati pendapat pengikut dengan berinteraksi secara positif", "Keberkesanan gaya penyampaian dalam mengekalkan perhatian"],
+            "IMPAK DAN PENGARUH": ["Kandungan memberi kesan positif kepada audiens (murid/guru/masyarakat)", "Berupaya menjadi rujukan dan inspirasi kepada komuniti pendidikan", "Menggalakkan interaksi dan kolaborasi dengan warga pendidik"]
+        };
+
+        // --- FUNGSI UNTUK MEMBINA JADUAL SECARA DINAMIK ---
+        
+        function createScoreSelect(className) {
+            let select = `<select name="${className}_skor" class="${className}">`;
+            for (let i = 0; i <= 5; i++) { select += `<option value="${i}">${i}</option>`; }
+            select += `</select>`;
+            return select;
+        }
+
+        function addSocialRow() {
+            const tableBody = document.querySelector('#social-media-table tbody');
+            const newRow = tableBody.insertRow();
+            const rowCount = tableBody.rows.length;
+            newRow.innerHTML = `
+                <td>
+                    <select name="social_pelantar_${rowCount}" class="social-pelantar-select">
+                        <option value="">Pilih Pelantar</option>
+                        <option value="Facebook">Facebook</option><option value="TikTok">TikTok</option><option value="Instagram">Instagram</option>
+                        <option value="YouTube">YouTube</option><option value="Threads">Threads</option><option value="Lain-lain">Lain-lain</option>
+                    </select>
+                    <div class="pelantar-lain-wrapper" style="display: none; margin-top: 10px;">
+                        <input type="text" name="social_pelantar_lain_${rowCount}" placeholder="Sila nyatakan pelantar">
+                    </div>
+                </td>
+                <td><input type="text" name="social_akaun_${rowCount}"></td>
+                <td><input type="number" name="social_followers_${rowCount}" value="0"></td>
+                <td><button type="button" class="btn remove-row-btn">X</button></td>
+            `;
+        }
+
+        function addPartARow() {
+            const tableBody = document.querySelector('#bahagian-a-table tbody');
+            const rowCount = tableBody.rows.length;
+            if (rowCount >= 5) return;
+            
+            const newRow = tableBody.insertRow();
+            newRow.innerHTML = `
+                <td>${rowCount + 1}</td>
+                <td><input type="text" name="a_jenis_${rowCount + 1}"></td><td><input type="text" name="a_tajuk_${rowCount + 1}"></td>
+                <td><input type="text" name="a_medium_${rowCount + 1}"></td><td><input type="url" name="a_pautan_${rowCount + 1}"></td>
+                <td>${createScoreSelect('skor-a')}</td>
+                <td><button type="button" class="btn remove-row-btn">X</button></td>
+            `;
+            if (tableBody.rows.length >= 5) {
+                document.getElementById('add-bahagian-a-btn').style.display = 'none';
+            }
+        }
+
+        function addPartBRow() {
+            const tableBody = document.querySelector('#bahagian-b-table tbody');
+            const rowCount = tableBody.rows.length;
+            const newRow = tableBody.insertRow();
+            newRow.innerHTML = `
+                <td>${rowCount + 1}</td>
+                <td><input type="text" name="b_program_${rowCount + 1}"></td><td><input type="text" name="b_peranan_${rowCount + 1}"></td>
+                <td><input type="text" name="b_tarikh_${rowCount + 1}"></td><td><input type="text" name="b_penganjur_${rowCount + 1}"></td>
+                <td>${createScoreSelect('skor-b')}</td>
+                <td><button type="button" class="btn remove-row-btn">X</button></td>
+            `;
+        }
+
+        const tableBodyC = document.querySelector('#table-c tbody');
+        let bilC = 1;
+        for (const tajuk in kriteriaC) {
+            tableBodyC.innerHTML += `<tr class="header-row"><td colspan="3">${tajuk}</td></tr>`;
+            kriteriaC[tajuk].forEach(kriteria => {
+                tableBodyC.innerHTML += `
+                    <tr>
+                        <td>${bilC}</td><td>${kriteria}</td>
+                        <td><div class="select-wrapper"><select name="c_skor_${bilC}" class="skor-c skor-c-select">${createScoreSelect('skor-c').substring(29)}</select></div></td>
+                    </tr>`;
+                bilC++;
+            });
+        }
+        
+        // --- LOGIK NAVIGASI TAB ---
+        const navLinks = document.querySelectorAll('.nav-link');
+        const tabContents = document.querySelectorAll('.tab-content');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navLinks.forEach(item => item.classList.remove('active'));
+                link.classList.add('active');
+                const targetId = link.getAttribute('href').substring(1);
+                tabContents.forEach(content => {
+                    content.classList.toggle('active', content.id === targetId);
+                });
+            });
+        });
+
+        // --- FUNGSI PENGIRAAN SKOR AUTOMATIK ---
+        function calculateScores() {
+            let totalA = Array.from(document.querySelectorAll('.skor-a')).reduce((sum, el) => sum + parseInt(el.value), 0);
+            document.getElementById('skor-a-rumusan').value = totalA;
+            const peratusA = totalA > 0 ? (totalA / (document.querySelectorAll('.skor-a').length * 5)) * 40 : 0;
+            document.getElementById('peratus-a-rumusan').value = peratusA.toFixed(2);
+            
+            let totalB = Array.from(document.querySelectorAll('.skor-b')).reduce((sum, el) => sum + parseInt(el.value), 0);
+            document.getElementById('skor-b-rumusan').value = totalB;
+            const peratusB = totalB > 0 ? (totalB / (document.querySelectorAll('.skor-b').length * 5)) * 20 : 0;
+            document.getElementById('peratus-b-rumusan').value = peratusB.toFixed(2);
+
+            let totalC = Array.from(document.querySelectorAll('.skor-c')).reduce((sum, el) => sum + parseInt(el.value), 0);
+            document.getElementById('jumlah-c').textContent = totalC;
+            document.getElementById('skor-c-rumusan').value = totalC;
+            const peratusC = (totalC / 65) * 40;
+            document.getElementById('peratus-c-rumusan').value = peratusC.toFixed(2);
+
+            const jumlahKeseluruhan = peratusA + peratusB + peratusC;
+            document.getElementById('jumlah-keseluruhan').value = jumlahKeseluruhan.toFixed(2);
+
+            let tahap = 'Starter';
+            if (jumlahKeseluruhan >= 90) tahap = 'TopInfluencer';
+            else if (jumlahKeseluruhan >= 80) tahap = 'Trendsetter';
+            else if (jumlahKeseluruhan >= 60) tahap = 'Next Gen';
+            document.getElementById('tahap-pencapaian').value = tahap;
+        }
+
+        // --- EVENT LISTENERS ---
+        document.querySelector('.content').addEventListener('change', function(e) {
+            if (e.target.matches('.skor-a, .skor-b, .skor-c')) { calculateScores(); }
+            if (e.target.classList.contains('social-pelantar-select')) {
+                e.target.nextElementSibling.style.display = (e.target.value === 'Lain-lain') ? 'block' : 'none';
+            }
+        });
+        
+        document.getElementById('kategori').addEventListener('change', function() {
+            document.getElementById('kategori-lain-wrapper').style.display = (this.value === 'Lain-lain') ? 'block' : 'none';
+        });
+        
+        document.getElementById('add-social-btn').addEventListener('click', addSocialRow);
+        document.getElementById('add-bahagian-a-btn').addEventListener('click', addPartARow);
+        document.getElementById('add-bahagian-b-btn').addEventListener('click', addPartBRow);
+
+        document.querySelector('.content').addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-row-btn')) {
+                const row = e.target.closest('tr');
+                const tableBody = row.parentElement;
+                row.remove();
+                if (tableBody.parentElement.id === 'bahagian-a-table') {
+                    document.getElementById('add-bahagian-a-btn').style.display = 'inline-flex';
+                    tableBody.querySelectorAll('tr').forEach((r, index) => { r.cells[0].textContent = index + 1; });
+                }
+                calculateScores();
+            }
+            if (e.target.matches('.section-lock-btn, .section-unlock-btn')) {
+                const sectionId = e.target.dataset.section;
+                const section = document.getElementById(sectionId);
+                const inputs = section.querySelectorAll('input, select, button.add-row-btn, button.remove-row-btn');
+                const isLocking = e.target.classList.contains('section-lock-btn');
+                inputs.forEach(input => input.disabled = isLocking);
+                section.querySelector('.section-lock-btn').style.display = isLocking ? 'none' : 'inline-block';
+                section.querySelector('.section-unlock-btn').style.display = isLocking ? 'inline-block' : 'none';
+            }
+        });
+        
+        // --- FUNGSI BANTUAN ---
+        document.getElementById('nama').addEventListener('input', (e) => {
+            document.getElementById('nama_pengesahan').value = e.target.value;
+        });
+        document.getElementById('tarikh_pengesahan').value = new Date().toLocaleDateString('ms-MY', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        // --- LOGIK MUAT TURUN PDF ---
+        document.getElementById('download-pdf-btn').addEventListener('click', function() {
+            const formContent = document.querySelector('.content');
+            const loader = document.getElementById('pdf-loader');
+            const activeTab = document.querySelector('.tab-content.active');
+            const allTabs = document.querySelectorAll('.tab-content');
+            const docName = document.getElementById('nama').value || 'responden';
+
+            loader.style.display = 'flex';
+
+            // Tunjukkan semua tab untuk ditangkap oleh html2canvas
+            allTabs.forEach(tab => tab.style.display = 'block');
+            
+            html2canvas(formContent, {
+                scale: 2, // Meningkatkan kualiti imej
+                useCORS: true
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({
+                    orientation: 'p',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                const ratio = imgWidth / imgHeight;
+                const canvasWidthInPdf = pdfWidth;
+                const canvasHeightInPdf = canvasWidthInPdf / ratio;
+                let heightLeft = canvasHeightInPdf;
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, canvasWidthInPdf, canvasHeightInPdf);
+                heightLeft -= pdfHeight;
+
+                while (heightLeft > 0) {
+                    position = heightLeft - canvasHeightInPdf;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, canvasWidthInPdf, canvasHeightInPdf);
+                    heightLeft -= pdfHeight;
+                }
+                
+                pdf.save(`Borang Penilaian Kendiri - ${docName}.pdf`);
+                
+                // Kembalikan paparan tab seperti asal
+                allTabs.forEach(tab => tab.style.display = 'none');
+                activeTab.style.display = 'block';
+                loader.style.display = 'none';
+            });
+        });
+
+        // --- LOGIK PENGHANTARAN BORANG ---
+        const form = document.getElementById('edufluencer-form');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const submitStatus = document.getElementById('submit-status');
+            // Gantikan dengan URL Web App anda yang sebenar
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbzMUiS883MqTjynTz9hIPBEbZxK8CWOXpHGM3ci4SPeJ7eMUi5C73_7kOOr6f6wAmPKtg/exec';
+            const formData = new FormData(form);
+            submitStatus.textContent = 'Menghantar data...';
+            submitStatus.style.color = '#333';
+            
+            fetch(scriptURL, { method: 'POST', body: formData })
+                .then(response => {
+                    if (response.ok) {
+                        submitStatus.textContent = 'Borang berjaya dihantar! Terima kasih.';
+                        submitStatus.style.color = '#27ae60';
+                        form.reset();
+                        document.querySelector('#social-media-table tbody').innerHTML = '';
+                        document.querySelector('#bahagian-a-table tbody').innerHTML = '';
+                        document.querySelector('#bahagian-b-table tbody').innerHTML = '';
+                        addSocialRow(); addPartARow(); addPartBRow();
+                        calculateScores();
+                        document.querySelector('.nav-link[href="#pengenalan"]').click();
+                    } else { throw new Error('Penghantaran gagal.'); }
+                })
+                .catch(error => {
+                    submitStatus.textContent = 'Ralat! Borang tidak dapat dihantar.';
+                    submitStatus.style.color = 'red';
+                    console.error('Error!', error.message);
+                });
+        });
+
+        // Panggil fungsi untuk memulakan baris pertama dan pengiraan
+        addSocialRow();
+        addPartARow();
+        addPartBRow();
+        calculateScores();
+    });
+    </script>
+</body>
+</html>

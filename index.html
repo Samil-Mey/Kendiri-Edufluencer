@@ -110,11 +110,18 @@
             height: auto;
         }
 
-        h1, h2 {
+        h1, h2, h4 {
             color: #2c3e50;
+        }
+
+        h1, h2 {
             margin-bottom: 25px;
             border-bottom: 2px solid #3498db; /* Warna utama biru */
             padding-bottom: 10px;
+        }
+        
+        h4 {
+            margin-top: 20px;
         }
 
         /* Styling Elemen Borang */
@@ -254,17 +261,6 @@
             box-shadow: none;
         }
 
-        .add-row-btn {
-            background: #3498db;
-            display: inline-flex;
-            align-items: center;
-        }
-        .add-row-btn:hover { box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4); }
-        .remove-row-btn {
-            background: #e74c3c;
-        }
-        .remove-row-btn:hover { box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4); }
-
         .section-controls {
             margin-top: 20px;
         }
@@ -389,11 +385,19 @@
                         </div>
                     </div>
                     <h4>Media Sosial</h4>
+                    <p><i>Arahan: Sila isi nama akaun anda. Jika tiada, sila tulis "TIADA".</i></p>
                     <table id="social-media-table">
-                        <thead><tr><th>Pelantar</th><th>Nama Akaun</th><th>Bilangan Followers</th><th>Padam</th></tr></thead>
-                        <tbody></tbody>
+                        <thead><tr><th>Pelantar</th><th>Nama Akaun</th><th>Bilangan Followers</th></tr></thead>
+                        <tbody>
+                            <tr><td>Facebook<input type="hidden" name="social_pelantar_1" value="Facebook"></td><td><input type="text" name="social_akaun_1" value="TIADA"></td><td><input type="number" name="social_followers_1" value="0"></td></tr>
+                            <tr><td>TikTok<input type="hidden" name="social_pelantar_2" value="TikTok"></td><td><input type="text" name="social_akaun_2" value="TIADA"></td><td><input type="number" name="social_followers_2" value="0"></td></tr>
+                            <tr><td>Instagram<input type="hidden" name="social_pelantar_3" value="Instagram"></td><td><input type="text" name="social_akaun_3" value="TIADA"></td><td><input type="number" name="social_followers_3" value="0"></td></tr>
+                            <tr><td>X<input type="hidden" name="social_pelantar_4" value="X"></td><td><input type="text" name="social_akaun_4" value="TIADA"></td><td><input type="number" name="social_followers_4" value="0"></td></tr>
+                            <tr><td>YouTube<input type="hidden" name="social_pelantar_5" value="YouTube"></td><td><input type="text" name="social_akaun_5" value="TIADA"></td><td><input type="number" name="social_followers_5" value="0"></td></tr>
+                            <tr><td>Threads<input type="hidden" name="social_pelantar_6" value="Threads"></td><td><input type="text" name="social_akaun_6" value="TIADA"></td><td><input type="number" name="social_followers_6" value="0"></td></tr>
+                            <tr><td><input type="text" name="social_pelantar_7" placeholder="Lain-lain..."></td><td><input type="text" name="social_akaun_7" value="TIADA"></td><td><input type="number" name="social_followers_7" value="0"></td></tr>
+                        </tbody>
                     </table>
-                    <button type="button" class="btn add-row-btn" id="add-social-btn">+ Tambah Media Sosial</button>
                     <div class="section-controls">
                         <button type="button" class="btn section-lock-btn" data-section="maklumat-diri">Selesai</button>
                         <button type="button" class="btn section-unlock-btn" data-section="maklumat-diri">Kemaskini</button>
@@ -405,10 +409,20 @@
                     <h2>BAHAGIAN A: PERKONGSIAN AMALAN (40%)</h2>
                     <p><strong>Arahan:</strong> Sila senaraikan sehingga lima (5) aktiviti dan bukti perkongsian amalan yang telah dilaksanakan.</p>
                     <table id="bahagian-a-table">
-                        <thead><tr><th>Bil</th><th>Jenis Perkongsian</th><th>Tajuk</th><th>Medium</th><th>Pautan/Bukti</th><th>Skor</th><th>Padam</th></tr></thead>
-                        <tbody></tbody>
+                        <thead><tr><th>Bil</th><th>Jenis Perkongsian</th><th>Tajuk</th><th>Medium</th><th>Pautan/Bukti</th><th>Skor</th></tr></thead>
+                        <tbody id="table-body-a"></tbody>
                     </table>
-                    <button type="button" class="btn add-row-btn" id="add-bahagian-a-btn">+ Tambah Aktiviti</button>
+                    <h4>Rubrik Bahagian A</h4>
+                    <table>
+                        <thead><tr><th>Skor</th><th>Kriteria</th></tr></thead>
+                        <tbody>
+                            <tr><td>5</td><td>Perkongsian amalan inovatif, berimpak tinggi, pelibatan melebihi 1000 engagement</td></tr>
+                            <tr><td>4</td><td>Amalan baik yang jelas, disampaikan dalam bentuk kreatif, pelibatan 500–999</td></tr>
+                            <tr><td>3</td><td>Perkongsian berkualiti sederhana, capaian sekitar 200–499</td></tr>
+                            <tr><td>2</td><td>Kandungan asas, kurang penglibatan atau pengaruh</td></tr>
+                            <tr><td>1</td><td>Perkongsian terlalu ringkas atau tiada elemen nilai tambah</td></tr>
+                        </tbody>
+                    </table>
                     <div class="section-controls">
                         <button type="button" class="btn section-lock-btn" data-section="bahagian-a">Selesai</button>
                         <button type="button" class="btn section-unlock-btn" data-section="bahagian-a">Kemaskini</button>
@@ -420,10 +434,20 @@
                      <h2>BAHAGIAN B: SUMBANGAN KHIDMAT PROFESIONAL (20%)</h2>
                      <p><strong>Arahan:</strong> Sila nyatakan bentuk sumbangan khidmat profesional yang telah diberikan.</p>
                      <table id="bahagian-b-table">
-                        <thead><tr><th>Bil</th><th>Program</th><th>Peranan</th><th>Tarikh/Tahun</th><th>Penganjur</th><th>Skor</th><th>Padam</th></tr></thead>
-                        <tbody></tbody>
+                        <thead><tr><th>Bil</th><th>Program</th><th>Peranan</th><th>Tarikh/Tahun</th><th>Penganjur</th><th>Skor</th></tr></thead>
+                        <tbody id="table-body-b"></tbody>
                     </table>
-                    <button type="button" class="btn add-row-btn" id="add-bahagian-b-btn">+ Tambah Sumbangan</button>
+                    <h4>Rubrik Bahagian B</h4>
+                    <table>
+                        <thead><tr><th>Skor</th><th>Kriteria</th></tr></thead>
+                        <tbody>
+                            <tr><td>5</td><td>Program besar / pelbagai lokasi, impak jelas, diiktiraf (oleh PPD/JPN/KPM)</td></tr>
+                            <tr><td>4</td><td>Khidmat bantu berkala, pelibatan aktif bersama komuniti guru/murid</td></tr>
+                            <tr><td>3</td><td>Sekali/sementara tetapi terancang dan memberi impak positif</td></tr>
+                            <tr><td>2</td><td>Terhad, bersifat dalaman sahaja</td></tr>
+                            <tr><td>0</td><td>Tiada khidmat bantu</td></tr>
+                        </tbody>
+                    </table>
                     <div class="section-controls">
                         <button type="button" class="btn section-lock-btn" data-section="bahagian-b">Selesai</button>
                         <button type="button" class="btn section-unlock-btn" data-section="bahagian-b">Kemaskini</button>
@@ -437,9 +461,12 @@
                      <div class="rubric-legend"><strong>Skala: 1</strong>=Sangat Lemah, <strong>2</strong>=Lemah, <strong>3</strong>=Sederhana, <strong>4</strong>=Baik, <strong>5</strong>=Cemerlang</div>
                     <table id="table-c">
                         <thead><tr><th>Bil</th><th>Kriteria</th><th>Skor (1-5)</th></tr></thead>
-                        <tbody></tbody>
+                        <tbody id="table-body-c"></tbody>
                     </table>
-                     <p><strong>Jumlah Markah Diperoleh: <span id="jumlah-c">0</span> / 65</strong></p>
+                    <div class="section-controls">
+                        <button type="button" class="btn section-lock-btn" data-section="bahagian-c">Selesai</button>
+                        <button type="button" class="btn section-unlock-btn" data-section="bahagian-c">Kemaskini</button>
+                    </div>
                 </section>
                 
                  <!-- =============== Bahagian Rumusan Skor =============== -->
@@ -505,86 +532,62 @@
         // --- FUNGSI UNTUK MEMBINA JADUAL SECARA DINAMIK ---
         
         function createScoreSelect(prefix, rowNumber) {
-            // FIX: Correctly generate name attribute
             let select = `<div class="select-wrapper"><select name="${prefix}_skor_${rowNumber}" class="${prefix}-skor skor-select">`;
             for (let i = 0; i <= 5; i++) { select += `<option value="${i}">${i}</option>`; }
             select += `</select></div>`;
             return select;
         }
 
-        function addSocialRow() {
-            const tableBody = document.querySelector('#social-media-table tbody');
-            const rowCount = tableBody.rows.length + 1;
-            const newRow = tableBody.insertRow();
-            newRow.innerHTML = `
-                <td>
-                    <select name="social_pelantar_${rowCount}" class="social-pelantar-select">
-                        <option value="">Pilih Pelantar</option>
-                        <option value="Facebook">Facebook</option><option value="TikTok">TikTok</option><option value="Instagram">Instagram</option>
-                        <option value="YouTube">YouTube</option><option value="Threads">Threads</option><option value="Lain-lain">Lain-lain</option>
-                    </select>
-                    <div class="pelantar-lain-wrapper" style="display: none; margin-top: 10px;">
-                        <input type="text" name="social_pelantar_lain_${rowCount}" placeholder="Sila nyatakan pelantar">
-                    </div>
-                </td>
-                <td><input type="text" name="social_akaun_${rowCount}"></td>
-                <td><input type="number" name="social_followers_${rowCount}" value="0"></td>
-                <td><button type="button" class="btn remove-row-btn">X</button></td>
-            `;
-        }
-
-        function addPartARow() {
-            const tableBody = document.querySelector('#bahagian-a-table tbody');
-            const rowCount = tableBody.rows.length + 1;
-            if (rowCount > 5) return;
-            
-            const newRow = tableBody.insertRow();
-            newRow.innerHTML = `
-                <td>${rowCount}</td>
-                <td><input type="text" name="a_jenis_${rowCount}"></td>
-                <td><input type="text" name="a_tajuk_${rowCount}"></td>
-                <td><input type="text" name="a_medium_${rowCount}"></td>
-                <td><input type="url" name="a_pautan_${rowCount}"></td>
-                <td>${createScoreSelect('a', rowCount)}</td>
-                <td><button type="button" class="btn remove-row-btn">X</button></td>
-            `;
-            if (tableBody.rows.length >= 5) {
-                document.getElementById('add-bahagian-a-btn').style.display = 'none';
+        function initializeTables() {
+            // Bina Jadual Bahagian A (5 baris tetap)
+            const tableBodyA = document.getElementById('table-body-a');
+            tableBodyA.innerHTML = ''; // Kosongkan dahulu
+            for (let i = 1; i <= 5; i++) {
+                const newRow = tableBodyA.insertRow();
+                newRow.innerHTML = `
+                    <td>${i}</td>
+                    <td><input type="text" name="a_jenis_${i}"></td>
+                    <td><input type="text" name="a_tajuk_${i}"></td>
+                    <td><input type="text" name="a_medium_${i}"></td>
+                    <td><input type="url" name="a_pautan_${i}"></td>
+                    <td>${createScoreSelect('a', i)}</td>
+                `;
             }
-        }
-
-        function addPartBRow() {
-            const tableBody = document.querySelector('#bahagian-b-table tbody');
-            const rowCount = tableBody.rows.length + 1;
-            if (rowCount > 5) return;
             
-            const newRow = tableBody.insertRow();
-            newRow.innerHTML = `
-                <td>${rowCount}</td>
-                <td><input type="text" name="b_program_${rowCount}"></td>
-                <td><input type="text" name="b_peranan_${rowCount}"></td>
-                <td><input type="text" name="b_tarikh_${rowCount}"></td>
-                <td><input type="text" name="b_penganjur_${rowCount}"></td>
-                <td>${createScoreSelect('b', rowCount)}</td>
-                <td><button type="button" class="btn remove-row-btn">X</button></td>
-            `;
-             if (tableBody.rows.length >= 5) {
-                document.getElementById('add-bahagian-b-btn').style.display = 'none';
+            // Bina Jadual Bahagian B (5 baris tetap)
+            const tableBodyB = document.getElementById('table-body-b');
+            tableBodyB.innerHTML = ''; // Kosongkan dahulu
+            for (let i = 1; i <= 5; i++) {
+                const newRow = tableBodyB.insertRow();
+                newRow.innerHTML = `
+                    <td>${i}</td>
+                    <td><input type="text" name="b_program_${i}"></td>
+                    <td><input type="text" name="b_peranan_${i}"></td>
+                    <td><input type="text" name="b_tarikh_${i}"></td>
+                    <td><input type="text" name="b_penganjur_${i}"></td>
+                    <td>${createScoreSelect('b', i)}</td>
+                `;
             }
-        }
 
-        const tableBodyC = document.querySelector('#table-c tbody');
-        let bilC = 1;
-        for (const tajuk in kriteriaC) {
-            tableBodyC.innerHTML += `<tr class="header-row"><td colspan="3">${tajuk}</td></tr>`;
-            kriteriaC[tajuk].forEach(kriteria => {
-                tableBodyC.innerHTML += `
-                    <tr>
-                        <td>${bilC}</td><td>${kriteria}</td>
-                        <td><div class="select-wrapper"><select name="c_skor_${bilC}" class="skor-c skor-select">${createScoreSelect('c', bilC).substring(47)}</select></div></td>
-                    </tr>`;
-                bilC++;
-            });
+            const tableBodyC = document.getElementById('table-body-c');
+            tableBodyC.innerHTML = ''; // Kosongkan dahulu
+            let bilC = 1;
+            for (const tajuk in kriteriaC) {
+                tableBodyC.innerHTML += `<tr class="header-row"><td colspan="3">${tajuk}</td></tr>`;
+                kriteriaC[tajuk].forEach(kriteria => {
+                    const newRow = tableBodyC.insertRow();
+                    newRow.innerHTML = `
+                        <td>${bilC}</td>
+                        <td>${kriteria}</td>
+                        <td><div class="select-wrapper"><select name="c_skor_${bilC}" class="skor-c skor-select"></select></div></td>
+                    `;
+                    const select = newRow.querySelector('select');
+                    for (let i=0; i<=5; i++) {
+                        select.add(new Option(i, i));
+                    }
+                    bilC++;
+                });
+            }
         }
         
         // --- LOGIK NAVIGASI TAB ---
@@ -606,16 +609,15 @@
         function calculateScores() {
             let totalA = Array.from(document.querySelectorAll('.a-skor')).reduce((sum, el) => sum + parseInt(el.value), 0);
             document.getElementById('skor-a-rumusan').value = totalA;
-            const peratusA = totalA > 0 ? (totalA / (document.querySelectorAll('.a-skor').length * 5)) * 40 : 0;
+            const peratusA = (totalA / 25) * 40;
             document.getElementById('peratus-a-rumusan').value = peratusA.toFixed(2);
             
             let totalB = Array.from(document.querySelectorAll('.b-skor')).reduce((sum, el) => sum + parseInt(el.value), 0);
             document.getElementById('skor-b-rumusan').value = totalB;
-            const peratusB = totalB > 0 ? (totalB / (document.querySelectorAll('.b-skor').length * 5)) * 20 : 0;
+            const peratusB = (totalB / 25) * 20;
             document.getElementById('peratus-b-rumusan').value = peratusB.toFixed(2);
 
             let totalC = Array.from(document.querySelectorAll('.skor-c')).reduce((sum, el) => sum + parseInt(el.value), 0);
-            document.getElementById('jumlah-c').textContent = totalC;
             document.getElementById('skor-c-rumusan').value = totalC;
             const peratusC = (totalC / 65) * 40;
             document.getElementById('peratus-c-rumusan').value = peratusC.toFixed(2);
@@ -633,35 +635,17 @@
         // --- EVENT LISTENERS ---
         document.querySelector('.content').addEventListener('change', function(e) {
             if (e.target.matches('.a-skor, .b-skor, .skor-c')) { calculateScores(); }
-            if (e.target.classList.contains('social-pelantar-select')) {
-                e.target.closest('td').querySelector('.pelantar-lain-wrapper').style.display = (e.target.value === 'Lain-lain') ? 'block' : 'none';
-            }
         });
         
         document.getElementById('kategori').addEventListener('change', function() {
             document.getElementById('kategori-lain-wrapper').style.display = (this.value === 'Lain-lain') ? 'block' : 'none';
         });
-        
-        document.getElementById('add-social-btn').addEventListener('click', addSocialRow);
-        document.getElementById('add-bahagian-a-btn').addEventListener('click', addPartARow);
-        document.getElementById('add-bahagian-b-btn').addEventListener('click', addPartBRow);
 
         document.querySelector('.content').addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-row-btn')) {
-                const row = e.target.closest('tr');
-                const tableBody = row.parentElement;
-                const table = tableBody.parentElement;
-                row.remove();
-                if (table.id === 'bahagian-a-table' || table.id === 'bahagian-b-table') {
-                    document.getElementById(`add-${table.id.replace('-table', '-btn')}`).style.display = 'inline-flex';
-                    tableBody.querySelectorAll('tr').forEach((r, index) => { r.cells[0].textContent = index + 1; });
-                }
-                calculateScores();
-            }
             if (e.target.matches('.section-lock-btn, .section-unlock-btn')) {
                 const sectionId = e.target.dataset.section;
                 const section = document.getElementById(sectionId);
-                const inputs = section.querySelectorAll('input, select, button.add-row-btn, button.remove-row-btn');
+                const inputs = section.querySelectorAll('input, select');
                 const isLocking = e.target.classList.contains('section-lock-btn');
                 inputs.forEach(input => input.disabled = isLocking);
                 section.querySelector('.section-lock-btn').style.display = isLocking ? 'none' : 'inline-block';
@@ -721,8 +705,11 @@
                 y += 5;
 
                 const socialTableBody = Array.from(document.querySelectorAll('#social-media-table tbody tr')).map(row => {
-                    let pelantar = row.querySelector('.social-pelantar-select').value;
-                    if (pelantar === 'Lain-lain') { pelantar = row.querySelector('input[name^="social_pelantar_lain"]').value; }
+                    const pelantarCell = row.cells[0];
+                    let pelantar = pelantarCell.innerText;
+                    if (pelantarCell.querySelector('input')) {
+                        pelantar = pelantarCell.querySelector('input').value;
+                    }
                     return [pelantar, row.querySelector('input[name^="social_akaun"]').value, row.querySelector('input[name^="social_followers"]').value];
                 });
                 if (socialTableBody.length > 0) {
@@ -805,10 +792,11 @@
                         submitStatus.textContent = 'Borang berjaya dihantar! Terima kasih.';
                         submitStatus.style.color = '#27ae60';
                         form.reset();
-                        document.querySelector('#social-media-table tbody').innerHTML = '';
-                        document.querySelector('#bahagian-a-table tbody').innerHTML = '';
-                        document.querySelector('#bahagian-b-table tbody').innerHTML = '';
-                        addSocialRow(); addPartARow(); addPartBRow();
+                        // Reset dynamic tables
+                        document.querySelector('#table-body-a').innerHTML = '';
+                        document.querySelector('#table-body-b').innerHTML = '';
+                        // Re-initialize tables
+                        initializeTables();
                         calculateScores();
                         validateForm();
                         document.querySelector('.nav-link[href="#pengenalan"]').click();
@@ -823,10 +811,60 @@
                 });
         });
 
+        function initializeTables() {
+             // Bina Jadual Bahagian A (5 baris tetap)
+            const tableBodyA = document.getElementById('table-body-a');
+            tableBodyA.innerHTML = ''; // Kosongkan dahulu
+            for (let i = 1; i <= 5; i++) {
+                const newRow = tableBodyA.insertRow();
+                newRow.innerHTML = `
+                    <td>${i}</td>
+                    <td><input type="text" name="a_jenis_${i}"></td>
+                    <td><input type="text" name="a_tajuk_${i}"></td>
+                    <td><input type="text" name="a_medium_${i}"></td>
+                    <td><input type="url" name="a_pautan_${i}"></td>
+                    <td>${createScoreSelect('a', i)}</td>
+                `;
+            }
+            
+            // Bina Jadual Bahagian B (5 baris tetap)
+            const tableBodyB = document.getElementById('table-body-b');
+            tableBodyB.innerHTML = ''; // Kosongkan dahulu
+            for (let i = 1; i <= 5; i++) {
+                const newRow = tableBodyB.insertRow();
+                newRow.innerHTML = `
+                    <td>${i}</td>
+                    <td><input type="text" name="b_program_${i}"></td>
+                    <td><input type="text" name="b_peranan_${i}"></td>
+                    <td><input type="text" name="b_tarikh_${i}"></td>
+                    <td><input type="text" name="b_penganjur_${i}"></td>
+                    <td>${createScoreSelect('b', i)}</td>
+                `;
+            }
+
+            const tableBodyC = document.querySelector('#table-body-c');
+            tableBodyC.innerHTML = ''; // Kosongkan dahulu
+            let bilC = 1;
+            for (const tajuk in kriteriaC) {
+                tableBodyC.innerHTML += `<tr class="header-row"><td colspan="3">${tajuk}</td></tr>`;
+                kriteriaC[tajuk].forEach(kriteria => {
+                    const newRow = tableBodyC.insertRow();
+                    newRow.innerHTML = `
+                        <td>${bilC}</td>
+                        <td>${kriteria}</td>
+                        <td><div class="select-wrapper"><select name="c_skor_${bilC}" class="skor-c skor-select"></select></div></td>
+                    `;
+                    const select = newRow.querySelector('select');
+                    for (let i=0; i<=5; i++) {
+                        select.add(new Option(i, i));
+                    }
+                    bilC++;
+                });
+            }
+        }
+        
         // Panggil fungsi untuk memulakan borang
-        addSocialRow();
-        addPartARow();
-        addPartBRow();
+        initializeTables();
         calculateScores();
         validateForm(); 
     });

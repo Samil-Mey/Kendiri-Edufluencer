@@ -675,6 +675,7 @@
                 `;
             }
 
+            // FIX: Bina Jadual C dengan kaedah yang stabil
             const tableBodyC = document.getElementById('table-body-c');
             tableBodyC.innerHTML = ''; // Kosongkan dahulu
             let bilC = 1;
@@ -919,7 +920,7 @@
         document.getElementById('confirm-yes').addEventListener('click', function() {
             confirmationModal.classList.remove('show');
             const submitStatus = document.getElementById('submit-status');
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbzMUiS883MqTjynTz9hIPBEbZxK8CWOXpHGM3ci4SPeJ7eMUi5C73_7kOOr6f6wAmPKtg/exec';
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxHwgf4G5jVQA1dwBgkKKchI0J7edU-dUqjQq_94tfLmj4B_QuN2Qr3dgdBjJKY2mMhzg/exec';
             const formData = new FormData(form);
             submitStatus.textContent = 'Menghantar data...';
             submitStatus.style.color = '#333';

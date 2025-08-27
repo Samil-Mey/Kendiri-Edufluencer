@@ -623,7 +623,12 @@
             tableBodyC.innerHTML = ''; // Kosongkan dahulu
             let bilC = 1;
             for (const tajuk in kriteriaC) {
-                tableBodyC.innerHTML += `<tr class="header-row"><td colspan="3">${tajuk}</td></tr>`;
+                const headerRow = tableBodyC.insertRow();
+                headerRow.className = 'header-row';
+                const headerCell = headerRow.insertCell();
+                headerCell.colSpan = 3;
+                headerCell.textContent = tajuk;
+
                 kriteriaC[tajuk].forEach(kriteria => {
                     const newRow = tableBodyC.insertRow();
                     newRow.innerHTML = `

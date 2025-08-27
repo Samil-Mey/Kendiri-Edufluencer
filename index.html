@@ -675,6 +675,7 @@
                 `;
             }
 
+            // FIX: Bina Jadual C dengan kaedah yang stabil
             const tableBodyC = document.getElementById('table-body-c');
             tableBodyC.innerHTML = ''; // Kosongkan dahulu
             let bilC = 1;
@@ -714,8 +715,10 @@
                 link.classList.add('active');
                 const targetId = link.getAttribute('href').substring(1);
                 tabContents.forEach(content => {
-                    content.classList.toggle('active', content.id === targetId);
+                    content.style.display = 'none'; // Sembunyikan semua tab
                 });
+                document.getElementById(targetId).style.display = 'block'; // Tunjuk tab yang dipilih sahaja
+                
                 if (window.innerWidth < 1024) {
                     sidebar.classList.remove('open');
                 }

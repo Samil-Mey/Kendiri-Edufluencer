@@ -41,6 +41,9 @@
             height: 100%;
             overflow-y: auto;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transform: translateX(0);
+            transition: transform 0.3s ease-in-out;
+            z-index: 100;
         }
 
         .sidebar-logo {
@@ -65,7 +68,7 @@
             padding: 12px 18px;
             border-radius: 8px;
             margin-bottom: 8px;
-            transition: background-color: 0.3s ease, transform 0.2s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
         .sidebar ul li a:hover {
@@ -82,22 +85,8 @@
         /* Kandungan Utama di Kanan */
         .content {
             flex-grow: 1;
-            margin-left: 280px; /* Lebar sidebar */
             padding: 40px;
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.6s ease-in-out;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            transition: margin-left 0.3s ease-in-out;
         }
         
         /* Header Logo */
@@ -106,7 +95,7 @@
             margin-bottom: 30px;
         }
         .header-logo img {
-            max-width: 300px;
+            max-width: 100%;
             height: auto;
         }
 
@@ -165,10 +154,15 @@
             cursor: not-allowed;
             opacity: 0.7;
         }
+        
+        .table-wrapper {
+            overflow-x: auto;
+        }
 
         /* Styling Jadual */
         table {
             width: 100%;
+            min-width: 600px; /* Pastikan jadual tidak terlalu sempit */
             border-collapse: collapse;
             margin: 25px 0;
             box-shadow: 0 2px 15px rgba(0,0,0,0.1);
@@ -346,6 +340,22 @@
             border: none;
         }
         
+        /* Butang Menu (Hamburger) */
+        .menu-toggle {
+            display: none; /* Sembunyi pada skrin besar */
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 24px;
+            z-index: 101;
+        }
+
         /* Footer */
         footer {
             margin-top: 50px;
@@ -355,6 +365,37 @@
             font-size: 0.9rem;
             color: #7f8c8d;
         }
+
+        /* Media Queries untuk Paparan Responsif */
+        @media (min-width: 1024px) {
+            .content {
+                margin-left: 280px;
+            }
+        }
+        
+        @media (max-width: 1023px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .content {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .content {
+                padding: 20px;
+            }
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.2rem; }
+        }
+
     </style>
 </head>
 <body>
@@ -380,7 +421,7 @@
 
     <div class="container">
         <!-- Navigasi Tab di Sebelah Kiri -->
-        <nav class="sidebar">
+        <nav class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <img src="Imej1.png" alt="Logo Sidebar">
             </div>
@@ -397,6 +438,7 @@
 
         <!-- Kandungan Borang di Sebelah Kanan -->
         <main class="content">
+            <button type="button" class="menu-toggle" id="menu-toggle">☰</button>
             <form id="edufluencer-form">
                 
                 <!-- =============== Bahagian Pengenalan =============== -->
@@ -436,18 +478,20 @@
                     </div>
                     <h4>Media Sosial</h4>
                     <p><i>Arahan: Sila isi nama akaun anda. Jika tiada, sila tulis "TIADA".</i></p>
-                    <table id="social-media-table">
-                        <thead><tr><th>Pelantar</th><th>Nama Akaun</th><th>Bilangan Followers</th></tr></thead>
-                        <tbody>
-                            <tr><td>Facebook<input type="hidden" name="social_pelantar_1" value="Facebook"></td><td><input type="text" name="social_akaun_1" value="TIADA"></td><td><input type="number" name="social_followers_1" value="0"></td></tr>
-                            <tr><td>TikTok<input type="hidden" name="social_pelantar_2" value="TikTok"></td><td><input type="text" name="social_akaun_2" value="TIADA"></td><td><input type="number" name="social_followers_2" value="0"></td></tr>
-                            <tr><td>Instagram<input type="hidden" name="social_pelantar_3" value="Instagram"></td><td><input type="text" name="social_akaun_3" value="TIADA"></td><td><input type="number" name="social_followers_3" value="0"></td></tr>
-                            <tr><td>X<input type="hidden" name="social_pelantar_4" value="X"></td><td><input type="text" name="social_akaun_4" value="TIADA"></td><td><input type="number" name="social_followers_4" value="0"></td></tr>
-                            <tr><td>YouTube<input type="hidden" name="social_pelantar_5" value="YouTube"></td><td><input type="text" name="social_akaun_5" value="TIADA"></td><td><input type="number" name="social_followers_5" value="0"></td></tr>
-                            <tr><td>Threads<input type="hidden" name="social_pelantar_6" value="Threads"></td><td><input type="text" name="social_akaun_6" value="TIADA"></td><td><input type="number" name="social_followers_6" value="0"></td></tr>
-                            <tr><td><input type="text" name="social_pelantar_7" placeholder="Lain-lain..."></td><td><input type="text" name="social_akaun_7" value="TIADA"></td><td><input type="number" name="social_followers_7" value="0"></td></tr>
-                        </tbody>
-                    </table>
+                    <div class="table-wrapper">
+                        <table id="social-media-table">
+                            <thead><tr><th>Pelantar</th><th>Nama Akaun</th><th>Bilangan Followers</th></tr></thead>
+                            <tbody>
+                                <tr><td>Facebook<input type="hidden" name="social_pelantar_1" value="Facebook"></td><td><input type="text" name="social_akaun_1" value="TIADA"></td><td><input type="number" name="social_followers_1" value="0"></td></tr>
+                                <tr><td>TikTok<input type="hidden" name="social_pelantar_2" value="TikTok"></td><td><input type="text" name="social_akaun_2" value="TIADA"></td><td><input type="number" name="social_followers_2" value="0"></td></tr>
+                                <tr><td>Instagram<input type="hidden" name="social_pelantar_3" value="Instagram"></td><td><input type="text" name="social_akaun_3" value="TIADA"></td><td><input type="number" name="social_followers_3" value="0"></td></tr>
+                                <tr><td>X<input type="hidden" name="social_pelantar_4" value="X"></td><td><input type="text" name="social_akaun_4" value="TIADA"></td><td><input type="number" name="social_followers_4" value="0"></td></tr>
+                                <tr><td>YouTube<input type="hidden" name="social_pelantar_5" value="YouTube"></td><td><input type="text" name="social_akaun_5" value="TIADA"></td><td><input type="number" name="social_followers_5" value="0"></td></tr>
+                                <tr><td>Threads<input type="hidden" name="social_pelantar_6" value="Threads"></td><td><input type="text" name="social_akaun_6" value="TIADA"></td><td><input type="number" name="social_followers_6" value="0"></td></tr>
+                                <tr><td><input type="text" name="social_pelantar_7" placeholder="Lain-lain..."></td><td><input type="text" name="social_akaun_7" value="TIADA"></td><td><input type="number" name="social_followers_7" value="0"></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="section-controls">
                         <button type="button" class="btn section-lock-btn" data-section="maklumat-diri">Selesai</button>
                         <button type="button" class="btn section-unlock-btn" data-section="maklumat-diri">Kemaskini</button>
@@ -458,21 +502,25 @@
                 <section id="bahagian-a" class="tab-content">
                     <h2>BAHAGIAN A: PERKONGSIAN AMALAN (40%)</h2>
                     <p><strong>Arahan:</strong> Sila senaraikan sehingga lima (5) aktiviti dan bukti perkongsian amalan yang telah dilaksanakan.</p>
-                    <table id="bahagian-a-table">
-                        <thead><tr><th>Bil</th><th>Jenis Perkongsian</th><th>Tajuk</th><th>Medium</th><th>Pautan/Bukti</th><th>Skor</th></tr></thead>
-                        <tbody id="table-body-a"></tbody>
-                    </table>
+                    <div class="table-wrapper">
+                        <table id="bahagian-a-table">
+                            <thead><tr><th>Bil</th><th>Jenis Perkongsian</th><th>Tajuk</th><th>Medium</th><th>Pautan/Bukti</th><th>Skor</th></tr></thead>
+                            <tbody id="table-body-a"></tbody>
+                        </table>
+                    </div>
                     <h4>Rubrik Bahagian A</h4>
-                    <table>
-                        <thead><tr><th>Skor</th><th>Kriteria</th></tr></thead>
-                        <tbody>
-                            <tr><td>5</td><td>Perkongsian amalan inovatif, berimpak tinggi, pelibatan melebihi 1000 engagement</td></tr>
-                            <tr><td>4</td><td>Amalan baik yang jelas, disampaikan dalam bentuk kreatif, pelibatan 500–999</td></tr>
-                            <tr><td>3</td><td>Perkongsian berkualiti sederhana, capaian sekitar 200–499</td></tr>
-                            <tr><td>2</td><td>Kandungan asas, kurang penglibatan atau pengaruh</td></tr>
-                            <tr><td>1</td><td>Perkongsian terlalu ringkas atau tiada elemen nilai tambah</td></tr>
-                        </tbody>
-                    </table>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>Skor</th><th>Kriteria</th></tr></thead>
+                            <tbody>
+                                <tr><td>5</td><td>Perkongsian amalan inovatif, berimpak tinggi, pelibatan melebihi 1000 engagement</td></tr>
+                                <tr><td>4</td><td>Amalan baik yang jelas, disampaikan dalam bentuk kreatif, pelibatan 500–999</td></tr>
+                                <tr><td>3</td><td>Perkongsian berkualiti sederhana, capaian sekitar 200–499</td></tr>
+                                <tr><td>2</td><td>Kandungan asas, kurang penglibatan atau pengaruh</td></tr>
+                                <tr><td>1</td><td>Perkongsian terlalu ringkas atau tiada elemen nilai tambah</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="section-controls">
                         <button type="button" class="btn section-lock-btn" data-section="bahagian-a">Selesai</button>
                         <button type="button" class="btn section-unlock-btn" data-section="bahagian-a">Kemaskini</button>
@@ -483,21 +531,25 @@
                 <section id="bahagian-b" class="tab-content">
                      <h2>BAHAGIAN B: SUMBANGAN KHIDMAT PROFESIONAL (20%)</h2>
                      <p><strong>Arahan:</strong> Sila nyatakan bentuk sumbangan khidmat profesional yang telah diberikan.</p>
-                     <table id="bahagian-b-table">
-                        <thead><tr><th>Bil</th><th>Program</th><th>Peranan</th><th>Tarikh/Tahun</th><th>Penganjur</th><th>Skor</th></tr></thead>
-                        <tbody id="table-body-b"></tbody>
-                    </table>
+                     <div class="table-wrapper">
+                         <table id="bahagian-b-table">
+                            <thead><tr><th>Bil</th><th>Program</th><th>Peranan</th><th>Tarikh/Tahun</th><th>Penganjur</th><th>Skor</th></tr></thead>
+                            <tbody id="table-body-b"></tbody>
+                        </table>
+                     </div>
                     <h4>Rubrik Bahagian B</h4>
-                    <table>
-                        <thead><tr><th>Skor</th><th>Kriteria</th></tr></thead>
-                        <tbody>
-                            <tr><td>5</td><td>Program besar / pelbagai lokasi, impak jelas, diiktiraf (oleh PPD/JPN/KPM)</td></tr>
-                            <tr><td>4</td><td>Khidmat bantu berkala, pelibatan aktif bersama komuniti guru/murid</td></tr>
-                            <tr><td>3</td><td>Sekali/sementara tetapi terancang dan memberi impak positif</td></tr>
-                            <tr><td>2</td><td>Terhad, bersifat dalaman sahaja</td></tr>
-                            <tr><td>0</td><td>Tiada khidmat bantu</td></tr>
-                        </tbody>
-                    </table>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>Skor</th><th>Kriteria</th></tr></thead>
+                            <tbody>
+                                <tr><td>5</td><td>Program besar / pelbagai lokasi, impak jelas, diiktiraf (oleh PPD/JPN/KPM)</td></tr>
+                                <tr><td>4</td><td>Khidmat bantu berkala, pelibatan aktif bersama komuniti guru/murid</td></tr>
+                                <tr><td>3</td><td>Sekali/sementara tetapi terancang dan memberi impak positif</td></tr>
+                                <tr><td>2</td><td>Terhad, bersifat dalaman sahaja</td></tr>
+                                <tr><td>0</td><td>Tiada khidmat bantu</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="section-controls">
                         <button type="button" class="btn section-lock-btn" data-section="bahagian-b">Selesai</button>
                         <button type="button" class="btn section-unlock-btn" data-section="bahagian-b">Kemaskini</button>
@@ -509,10 +561,12 @@
                      <h2>BAHAGIAN C: DIMENSI KUALITI (40%)</h2>
                      <p><strong>Arahan:</strong> Tandakan pada ruangan 1–5 berdasarkan tahap pencapaian anda.</p>
                      <div class="rubric-legend"><strong>Skala: 1</strong>=Sangat Lemah, <strong>2</strong>=Lemah, <strong>3</strong>=Sederhana, <strong>4</strong>=Baik, <strong>5</strong>=Cemerlang</div>
-                    <table id="table-c">
-                        <thead><tr><th>Bil</th><th>Kriteria</th><th>Skor (1-5)</th></tr></thead>
-                        <tbody id="table-body-c"></tbody>
-                    </table>
+                     <div class="table-wrapper">
+                        <table id="table-c">
+                            <thead><tr><th>Bil</th><th>Kriteria</th><th>Skor (1-5)</th></tr></thead>
+                            <tbody id="table-body-c"></tbody>
+                        </table>
+                     </div>
                     <div class="section-controls">
                         <button type="button" class="btn section-lock-btn" data-section="bahagian-c">Selesai</button>
                         <button type="button" class="btn section-unlock-btn" data-section="bahagian-c">Kemaskini</button>
@@ -522,18 +576,20 @@
                  <!-- =============== Bahagian Rumusan Skor =============== -->
                 <section id="rumusan" class="tab-content">
                     <h2>RUMUSAN SKOR KESELURUHAN</h2>
-                    <table>
-                        <thead><tr><th>Komponen</th><th>Skor Diperoleh</th><th>Peratus Skor Diperolehi (%)</th></tr></thead>
-                        <tbody>
-                            <tr><td>BAHAGIAN A (40%)</td><td><input type="text" id="skor-a-rumusan" readonly></td><td><input type="text" id="peratus-a-rumusan" readonly></td></tr>
-                            <tr><td>BAHAGIAN B (20%)</td><td><input type="text" id="skor-b-rumusan" readonly></td><td><input type="text" id="peratus-b-rumusan" readonly></td></tr>
-                            <tr><td>BAHAGIAN C (40%)</td><td><input type="text" id="skor-c-rumusan" readonly></td><td><input type="text" id="peratus-c-rumusan" readonly></td></tr>
-                        </tbody>
-                        <tfoot>
-                            <tr><td><strong>JUMLAH KESELURUHAN (%)</strong></td><td colspan="2"><input type="text" id="jumlah-keseluruhan" readonly></td></tr>
-                            <tr><td><strong>TAHAP</strong></td><td colspan="2"><input type="text" id="tahap-pencapaian" readonly></td></tr>
-                        </tfoot>
-                    </table>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>Komponen</th><th>Skor Diperoleh</th><th>Peratus Skor Diperolehi (%)</th></tr></thead>
+                            <tbody>
+                                <tr><td>BAHAGIAN A (40%)</td><td><input type="text" id="skor-a-rumusan" readonly></td><td><input type="text" id="peratus-a-rumusan" readonly></td></tr>
+                                <tr><td>BAHAGIAN B (20%)</td><td><input type="text" id="skor-b-rumusan" readonly></td><td><input type="text" id="peratus-b-rumusan" readonly></td></tr>
+                                <tr><td>BAHAGIAN C (40%)</td><td><input type="text" id="skor-c-rumusan" readonly></td><td><input type="text" id="peratus-c-rumusan" readonly></td></tr>
+                            </tbody>
+                            <tfoot>
+                                <tr><td><strong>JUMLAH KESELURUHAN (%)</strong></td><td colspan="2"><input type="text" id="jumlah-keseluruhan" readonly></td></tr>
+                                <tr><td><strong>TAHAP</strong></td><td colspan="2"><input type="text" id="tahap-pencapaian" readonly></td></tr>
+                            </tfoot>
+                        </table>
+                    </div>
                      <div class="info-box">
                         <h4>Penerangan Tahap</h4>
                         <p><strong>TopInfluencer (90-100):</strong> Edufluencer berimpak tinggi yang konsisten, inovatif, dan menjadi rujukan utama dalam komuniti pendidikan.</p>
@@ -648,6 +704,9 @@
         // --- LOGIK NAVIGASI TAB ---
         const navLinks = document.querySelectorAll('.nav-link');
         const tabContents = document.querySelectorAll('.tab-content');
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menu-toggle');
+
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -657,7 +716,14 @@
                 tabContents.forEach(content => {
                     content.classList.toggle('active', content.id === targetId);
                 });
+                if (window.innerWidth < 1024) {
+                    sidebar.classList.remove('open');
+                }
             });
+        });
+        
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
         });
 
         // --- FUNGSI PENGIRAAN SKOR AUTOMATIK ---
@@ -775,10 +841,10 @@
                 addText('Bahagian A: Perkongsian Amalan', 14, 'bold');
                 const partATableBody = Array.from(document.querySelectorAll('#bahagian-a-table tbody tr')).map(row => [
                     row.cells[0].innerText,
-                    row.cells[1].querySelector('input').value,
-                    row.cells[2].querySelector('input').value,
-                    row.cells[3].querySelector('input').value,
-                    row.cells[5].querySelector('select').value
+                    row.querySelector('input[name^="a_jenis_"]').value,
+                    row.querySelector('input[name^="a_tajuk_"]').value,
+                    row.querySelector('input[name^="a_medium_"]').value,
+                    row.querySelector('.a-skor').value
                 ]);
                 if (partATableBody.length > 0) {
                     doc.autoTable({ head: [['Bil', 'Jenis', 'Tajuk', 'Medium', 'Skor']], body: partATableBody, startY: y });
@@ -788,14 +854,13 @@
                 addText('Bahagian B: Sumbangan Khidmat Profesional', 14, 'bold');
                 const partBTableBody = Array.from(document.querySelectorAll('#bahagian-b-table tbody tr')).map(row => [
                     row.cells[0].innerText,
-                    row.cells[1].querySelector('input').value,
-                    row.cells[2].querySelector('input').value,
-                    row.cells[3].querySelector('input').value,
-                    row.cells[4].querySelector('input').value,
-                    row.cells[5].querySelector('select').value
+                    row.querySelector('input[name^="b_program_"]').value,
+                    row.querySelector('input[name^="b_peranan_"]').value,
+                    row.querySelector('input[name^="b_tarikh_"]').value,
+                    row.querySelector('.b-skor').value
                 ]);
                 if (partBTableBody.length > 0) {
-                    doc.autoTable({ head: [['Bil', 'Program', 'Peranan', 'Tarikh', 'Penganjur', 'Skor']], body: partBTableBody, startY: y });
+                    doc.autoTable({ head: [['Bil', 'Program', 'Peranan', 'Tarikh', 'Skor']], body: partBTableBody, startY: y });
                     y = doc.autoTable.previous.finalY + 10;
                 }
                 

@@ -299,20 +299,45 @@
         .info-box h4 { color: #2980b9; margin-top: 15px; }
         #submit-status { margin-top: 15px; font-weight: bold; }
         
-        /* Loading Overlay for PDF Generation */
-        #pdf-loader {
+        /* Loading Overlay & Modal */
+        .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.7);
-            color: white;
             display: none;
             justify-content: center;
             align-items: center;
-            font-size: 1.5rem;
             z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        .modal {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            color: #333;
+            max-width: 400px;
+        }
+        .modal h3 {
+            margin-bottom: 20px;
+        }
+        .modal-buttons {
+            margin-top: 20px;
+        }
+        .modal-buttons .btn {
+            min-width: 100px;
+        }
+        .success-message {
+            font-size: 1.5rem;
+            color: white;
         }
         
         /* Footer */
@@ -327,7 +352,26 @@
     </style>
 </head>
 <body>
-    <div id="pdf-loader">Menjana PDF, sila tunggu...</div>
+    <div id="pdf-loader" class="overlay">
+        <div class="modal">Menjana PDF, sila tunggu...</div>
+    </div>
+    <div id="confirmation-modal" class="overlay">
+        <div class="modal">
+            <h3>Pengesahan</h3>
+            <p>Adakah anda pasti untuk menghantar borang ini?</p>
+            <div class="modal-buttons">
+                <button type="button" id="confirm-yes" class="btn submit-btn">Ya, Hantar</button>
+                <button type="button" id="confirm-no" class="btn pdf-btn">Batal</button>
+            </div>
+        </div>
+    </div>
+    <div id="success-overlay" class="overlay">
+        <div class="success-message">
+            <h2>✔️</h2>
+            <p>Data Berjaya Dihantar!</p>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Navigasi Tab di Sebelah Kiri -->
         <nav class="sidebar">
@@ -781,8 +825,20 @@
 
         // --- LOGIK PENGHANTARAN BORANG ---
         const form = document.getElementById('edufluencer-form');
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const successOverlay = document.getElementById('success-overlay');
+
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            confirmationModal.classList.add('show');
+        });
+
+        document.getElementById('confirm-no').addEventListener('click', function() {
+            confirmationModal.classList.remove('show');
+        });
+
+        document.getElementById('confirm-yes').addEventListener('click', function() {
+            confirmationModal.classList.remove('show');
             const submitStatus = document.getElementById('submit-status');
             const scriptURL = 'https://script.google.com/macros/s/AKfycbzMUiS883MqTjynTz9hIPBEbZxK8CWOXpHGM3ci4SPeJ7eMUi5C73_7kOOr6f6wAmPKtg/exec';
             const formData = new FormData(form);
@@ -793,13 +849,16 @@
                 .then(response => response.json()) 
                 .then(data => {
                     if (data.result === 'success') {
-                        submitStatus.textContent = 'Borang berjaya dihantar! Terima kasih.';
-                        submitStatus.style.color = '#27ae60';
-                        form.reset();
-                        initializeTables();
-                        calculateScores();
-                        validateForm();
-                        document.querySelector('.nav-link[href="#pengenalan"]').click();
+                        successOverlay.classList.add('show');
+                        setTimeout(() => {
+                            successOverlay.classList.remove('show');
+                            form.reset();
+                            initializeTables();
+                            calculateScores();
+                            validateForm();
+                            document.querySelector('.nav-link[href="#pengenalan"]').click();
+                            submitStatus.textContent = '';
+                        }, 3000);
                     } else {
                         throw new Error(data.error || 'Penghantaran gagal dari skrip.');
                     }

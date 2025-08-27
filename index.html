@@ -775,10 +775,10 @@
                 addText('Bahagian A: Perkongsian Amalan', 14, 'bold');
                 const partATableBody = Array.from(document.querySelectorAll('#bahagian-a-table tbody tr')).map(row => [
                     row.cells[0].innerText,
-                    row.querySelector('input[name^="a_jenis_"]').value,
-                    row.querySelector('input[name^="a_tajuk_"]').value,
-                    row.querySelector('input[name^="a_medium_"]').value,
-                    row.querySelector('.a-skor').value
+                    row.cells[1].querySelector('input').value,
+                    row.cells[2].querySelector('input').value,
+                    row.cells[3].querySelector('input').value,
+                    row.cells[5].querySelector('select').value
                 ]);
                 if (partATableBody.length > 0) {
                     doc.autoTable({ head: [['Bil', 'Jenis', 'Tajuk', 'Medium', 'Skor']], body: partATableBody, startY: y });
@@ -788,13 +788,14 @@
                 addText('Bahagian B: Sumbangan Khidmat Profesional', 14, 'bold');
                 const partBTableBody = Array.from(document.querySelectorAll('#bahagian-b-table tbody tr')).map(row => [
                     row.cells[0].innerText,
-                    row.querySelector('input[name^="b_program_"]').value,
-                    row.querySelector('input[name^="b_peranan_"]').value,
-                    row.querySelector('input[name^="b_tarikh_"]').value,
-                    row.querySelector('.b-skor').value
+                    row.cells[1].querySelector('input').value,
+                    row.cells[2].querySelector('input').value,
+                    row.cells[3].querySelector('input').value,
+                    row.cells[4].querySelector('input').value,
+                    row.cells[5].querySelector('select').value
                 ]);
                 if (partBTableBody.length > 0) {
-                    doc.autoTable({ head: [['Bil', 'Program', 'Peranan', 'Tarikh', 'Skor']], body: partBTableBody, startY: y });
+                    doc.autoTable({ head: [['Bil', 'Program', 'Peranan', 'Tarikh', 'Penganjur', 'Skor']], body: partBTableBody, startY: y });
                     y = doc.autoTable.previous.finalY + 10;
                 }
                 

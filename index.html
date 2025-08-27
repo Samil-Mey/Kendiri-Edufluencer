@@ -65,7 +65,7 @@
             padding: 12px 18px;
             border-radius: 8px;
             margin-bottom: 8px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: background-color: 0.3s ease, transform 0.2s ease;
         }
 
         .sidebar ul li a:hover {
@@ -622,7 +622,7 @@
             const peratusC = (totalC / 65) * 40;
             document.getElementById('peratus-c-rumusan').value = peratusC.toFixed(2);
 
-            const jumlahKeseluruhan = peratusA + peratusB + peratusC;
+            const jumlahKeseluruhan = parseFloat(peratusA) + parseFloat(peratusB) + parseFloat(peratusC);
             document.getElementById('jumlah-keseluruhan').value = jumlahKeseluruhan.toFixed(2);
 
             let tahap = 'Starter';
@@ -743,6 +743,10 @@
                     y = doc.autoTable.previous.finalY + 10;
                 }
                 
+                // Mula muka surat baharu untuk Bahagian C
+                doc.addPage();
+                y = 15;
+
                 addText('Bahagian C: Dimensi Kualiti', 14, 'bold');
                 const partCTableBody = Array.from(document.querySelectorAll('#table-c tbody tr:not(.header-row)')).map(row => [
                     row.cells[0].innerText,
@@ -792,10 +796,6 @@
                         submitStatus.textContent = 'Borang berjaya dihantar! Terima kasih.';
                         submitStatus.style.color = '#27ae60';
                         form.reset();
-                        // Reset dynamic tables
-                        document.querySelector('#table-body-a').innerHTML = '';
-                        document.querySelector('#table-body-b').innerHTML = '';
-                        // Re-initialize tables
                         initializeTables();
                         calculateScores();
                         validateForm();
@@ -810,58 +810,6 @@
                     console.error('Error!', error.message);
                 });
         });
-
-        function initializeTables() {
-             // Bina Jadual Bahagian A (5 baris tetap)
-            const tableBodyA = document.getElementById('table-body-a');
-            tableBodyA.innerHTML = ''; // Kosongkan dahulu
-            for (let i = 1; i <= 5; i++) {
-                const newRow = tableBodyA.insertRow();
-                newRow.innerHTML = `
-                    <td>${i}</td>
-                    <td><input type="text" name="a_jenis_${i}"></td>
-                    <td><input type="text" name="a_tajuk_${i}"></td>
-                    <td><input type="text" name="a_medium_${i}"></td>
-                    <td><input type="url" name="a_pautan_${i}"></td>
-                    <td>${createScoreSelect('a', i)}</td>
-                `;
-            }
-            
-            // Bina Jadual Bahagian B (5 baris tetap)
-            const tableBodyB = document.getElementById('table-body-b');
-            tableBodyB.innerHTML = ''; // Kosongkan dahulu
-            for (let i = 1; i <= 5; i++) {
-                const newRow = tableBodyB.insertRow();
-                newRow.innerHTML = `
-                    <td>${i}</td>
-                    <td><input type="text" name="b_program_${i}"></td>
-                    <td><input type="text" name="b_peranan_${i}"></td>
-                    <td><input type="text" name="b_tarikh_${i}"></td>
-                    <td><input type="text" name="b_penganjur_${i}"></td>
-                    <td>${createScoreSelect('b', i)}</td>
-                `;
-            }
-
-            const tableBodyC = document.querySelector('#table-body-c');
-            tableBodyC.innerHTML = ''; // Kosongkan dahulu
-            let bilC = 1;
-            for (const tajuk in kriteriaC) {
-                tableBodyC.innerHTML += `<tr class="header-row"><td colspan="3">${tajuk}</td></tr>`;
-                kriteriaC[tajuk].forEach(kriteria => {
-                    const newRow = tableBodyC.insertRow();
-                    newRow.innerHTML = `
-                        <td>${bilC}</td>
-                        <td>${kriteria}</td>
-                        <td><div class="select-wrapper"><select name="c_skor_${bilC}" class="skor-c skor-select"></select></div></td>
-                    `;
-                    const select = newRow.querySelector('select');
-                    for (let i=0; i<=5; i++) {
-                        select.add(new Option(i, i));
-                    }
-                    bilC++;
-                });
-            }
-        }
         
         // Panggil fungsi untuk memulakan borang
         initializeTables();

@@ -86,6 +86,10 @@
             font-weight: 600;
             color: #ffffff;
         }
+        
+        .sidebar ul li a.completed {
+            background-color: #27ae60; /* Warna hijau */
+        }
 
         /* Kandungan Utama di Kanan */
         .content {
@@ -478,15 +482,40 @@
                     <div class="header-logo">
                         <img src="Imej2.gif" alt="Logo Organisasi">
                     </div>
-                    <h1>Borang Penilaian Kendiri Edufluencer KPM</h1>
+                    <h1>Arahan Pengisian Borang Penilaian Kendiri Edufluencer KPM</h1>
                     <div class="info-box">
-                        <h4>1. Tujuan</h4><p>Borang ini dibangunkan sebagai instrumen penilaian kendiri bagi Edufluencer Kementerian Pendidikan (KPM) untuk menilai tahap profesionalisme, kualiti kandungan, komunikasi dan penyampaian, impak, inovasi serta pembangunan berterusan dalam peranan mereka sebagai pendidik digital.</p>
+                        <h4>1. Tujuan</h4>
+                        <p>Borang ini dibangunkan sebagai instrumen penilaian kendiri bagi Edufluencer Kementerian Pendidikan (KPM) untuk menilai tahap profesionalisme, kualiti kandungan, komunikasi dan penyampaian, impak, inovasi serta pembangunan berterusan dalam peranan mereka sebagai pendidik digital.</p>
+                        
                         <h4>2. Objektif</h4>
                         <ul>
-                            <li>Menilai secara menyeluruh kekuatan dan kelemahan diri sebagai Edufluencer iaitu pengetahuan, kemahiran, nilai serta tahap profesionalisme.</li>
+                            <li>Menilai secara menyeluruh kekuatan dan kelemahan diri sebagai Edufluencer iaitu pengetahuan, kemahiran, nilai serta nilai profesionalisme.</li>
                             <li>Mengenal pasti aspek-aspek utama yang memerlukan penambahbaikan bagi meningkatkan kualiti kandungan, keberkesanan penyampaian, impak kepada audiens serta inovasi dalam amalan digital.</li>
+                            <li>Merancang hala tuju pembangunan profesional secara berterusan melalui strategi peningkatan diri, penguasaan teknologi terkini, serta pembelajaran sepanjang hayat selaras dengan keperluan KPM dan perkembangan dunia pendidikan digital.</li>
                         </ul>
-                         <h4>5. Kerahsiaan</h4><p>Penilaian kendiri ini adalah untuk kegunaan peribadi dan pembangunan profesional. Maklumat yang diisi tidak akan menjejaskan penilaian rasmi kecuali diminta untuk rujukan oleh pihak KPM.</p>
+
+                        <h4>3. Bahagian Penilaian</h4>
+                        <p>Borang ini dibahagikan kepada beberapa bahagian utama:<br>
+                           <strong>Bahagian A: Perkongsian Amalan</strong><br>
+                           <strong>Bahagian B: Sumbangan Khidmat Profesional</strong><br>
+                           <strong>Bahagian C: Dimensi Kualiti</strong>
+                        </p>
+
+                        <h4>4. Jumlah Skor</h4>
+                        <p>a. Jumlahkan semua skor yang diperoleh.<br>
+                           b. Bandingkan jumlah skor dengan tahap penilaian berikut:</p>
+                        <table>
+                            <thead><tr><th>Skor</th><th>Tahap</th></tr></thead>
+                            <tbody>
+                                <tr><td>90 – 100</td><td>#TopInfluencer</td></tr>
+                                <tr><td>80 – 89.99</td><td>#Trendsetter</td></tr>
+                                <tr><td>60 – 79.99</td><td>#NextGen</td></tr>
+                                <tr><td>0 – 59.99</td><td>#Starter</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h4>5. Kerahsiaan</h4>
+                        <p>Penilaian kendiri ini adalah untuk kegunaan peribadi dan pembangunan profesional. Maklumat yang diisi tidak akan menjejaskan penilaian rasmi kecuali diminta untuk rujukan oleh pihak KPM.</p>
                     </div>
                     <div class="section-controls">
                         <button type="button" class="btn start-btn" id="start-btn">Mula Menjawab</button>
@@ -814,6 +843,12 @@
                 if (!isLocking) {
                      section.querySelector('.next-btn').style.display = 'none';
                 }
+                
+                // Tandakan tab sebagai selesai
+                const navLink = document.querySelector(`.nav-link[href="#${section.id}"]`);
+                if (navLink) {
+                    navLink.classList.toggle('completed', isLocking);
+                }
             });
         });
 
@@ -856,10 +891,6 @@
             if (e.target.matches('.a-skor, .b-skor, .skor-c')) { calculateScores(); }
         });
         
-        document.getElementById('kategori').addEventListener('change', function() {
-            document.getElementById('kategori-lain-wrapper').style.display = (this.value === 'Lain-lain') ? 'block' : 'none';
-        });
-        
         // --- FUNGSI BANTUAN ---
         document.getElementById('nama').addEventListener('input', (e) => {
             document.getElementById('nama_pengesahan').value = e.target.value;
@@ -886,7 +917,103 @@
 
         // --- LOGIK MUAT TURUN PDF (VERSI DIPERBAIKI) ---
         document.getElementById('download-pdf-btn').addEventListener('click', function() {
-            // ... (Fungsi PDF yang sedia ada)
+            const loader = document.getElementById('pdf-loader');
+            loader.style.display = 'flex';
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const docName = document.getElementById('nama').value || 'responden';
+
+                let y = 15;
+                const addText = (text, size = 10, style = 'normal', indent = 10) => {
+                    if (y > 280) { doc.addPage(); y = 15; }
+                    doc.setFontSize(size).setFont('helvetica', style);
+                    doc.text(text, indent, y);
+                    y += (size * 0.5);
+                };
+
+                addText('Borang Penilaian Kendiri Edufluencer KPM', 18, 'bold', 10);
+                y += 5;
+
+                addText('Maklumat Peribadi', 14, 'bold');
+                const maklumat = { "Nama": "nama", "No. KP": "nokp", "Jawatan": "jawatan", "Gred": "gred", "Negeri": "negeri", "Nama Institusi": "sekolah", "Kategori": "kategori" };
+                for (const [label, id] of Object.entries(maklumat)) { addText(`${label}: ${document.getElementById(id).value}`); }
+                y += 5;
+
+                const socialTableBody = Array.from(document.querySelectorAll('#social-media-table tbody tr')).map(row => {
+                    const pelantarCell = row.cells[0];
+                    let pelantar = pelantarCell.innerText;
+                    if (pelantarCell.querySelector('input')) {
+                        pelantar = pelantarCell.querySelector('input').value;
+                    }
+                    return [pelantar, row.querySelector('input[name^="social_akaun"]').value, row.querySelector('input[name^="social_followers"]').value];
+                });
+                if (socialTableBody.length > 0) {
+                    doc.autoTable({ head: [['Pelantar', 'Nama Akaun', 'Followers']], body: socialTableBody, startY: y });
+                    y = doc.autoTable.previous.finalY + 10;
+                }
+
+                addText('Bahagian A: Perkongsian Amalan', 14, 'bold');
+                const partATableBody = Array.from(document.querySelectorAll('#bahagian-a-table tbody tr')).map(row => [
+                    row.cells[0].innerText,
+                    row.querySelector('input[name^="a_jenis_"]').value,
+                    row.querySelector('input[name^="a_tajuk_"]').value,
+                    row.querySelector('input[name^="a_medium_"]').value,
+                    row.querySelector('.a-skor').value
+                ]);
+                if (partATableBody.length > 0) {
+                    doc.autoTable({ head: [['Bil', 'Jenis', 'Tajuk', 'Medium', 'Skor']], body: partATableBody, startY: y });
+                    y = doc.autoTable.previous.finalY + 10;
+                }
+
+                addText('Bahagian B: Sumbangan Khidmat Profesional', 14, 'bold');
+                const partBTableBody = Array.from(document.querySelectorAll('#bahagian-b-table tbody tr')).map(row => [
+                    row.cells[0].innerText,
+                    row.querySelector('input[name^="b_program_"]').value,
+                    row.querySelector('input[name^="b_peranan_"]').value,
+                    row.querySelector('input[name^="b_tarikh_"]').value,
+                    row.querySelector('.b-skor').value
+                ]);
+                if (partBTableBody.length > 0) {
+                    doc.autoTable({ head: [['Bil', 'Program', 'Peranan', 'Tarikh', 'Skor']], body: partBTableBody, startY: y });
+                    y = doc.autoTable.previous.finalY + 10;
+                }
+                
+                // Mula muka surat baharu untuk Bahagian C
+                doc.addPage();
+                y = 15;
+
+                addText('Bahagian C: Dimensi Kualiti', 14, 'bold');
+                const partCTableBody = Array.from(document.querySelectorAll('#table-c tbody tr:not(.header-row)')).map(row => [
+                    row.cells[0].innerText,
+                    row.cells[1].innerText,
+                    row.querySelector('.skor-c').value
+                ]);
+                if (partCTableBody.length > 0) {
+                    doc.autoTable({ head: [['Bil', 'Kriteria', 'Skor']], body: partCTableBody, startY: y });
+                    y = doc.autoTable.previous.finalY + 10;
+                }
+
+                if (y > 220) { doc.addPage(); y = 15; }
+                addText('Rumusan Skor Keseluruhan', 14, 'bold');
+                const rumusanData = [
+                    ['Bahagian A', document.getElementById('skor-a-rumusan').value, document.getElementById('peratus-a-rumusan').value + ' %'],
+                    ['Bahagian B', document.getElementById('skor-b-rumusan').value, document.getElementById('peratus-b-rumusan').value + ' %'],
+                    ['Bahagian C', document.getElementById('skor-c-rumusan').value, document.getElementById('peratus-c-rumusan').value + ' %'],
+                ];
+                doc.autoTable({ head: [['Komponen', 'Skor Diperoleh', 'Peratus (%)']], body: rumusanData, startY: y });
+                y = doc.autoTable.previous.finalY + 5;
+                addText(`Jumlah Keseluruhan: ${document.getElementById('jumlah-keseluruhan').value} %`, 12, 'bold');
+                addText(`Tahap: ${document.getElementById('tahap-pencapaian').value}`, 12, 'bold');
+                
+                doc.save(`Borang Penilaian Kendiri - ${docName}.pdf`);
+            } catch (error) {
+                console.error("Ralat semasa menjana PDF:", error);
+                alert("Maaf, terdapat ralat semasa menjana PDF. Sila cuba lagi.");
+            } finally {
+                loader.style.display = 'none';
+            }
         });
 
         // --- LOGIK PENGHANTARAN BORANG ---
@@ -949,7 +1076,6 @@
         calculateScores();
         validateForm(); 
         sidebar.classList.add('disabled');
-        showTab('pengenalan');
     });
     </script>
 </body>

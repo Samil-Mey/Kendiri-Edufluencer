@@ -409,11 +409,12 @@
             h2 { font-size: 1.2rem; }
         }
 
-        /* PERUBAHAN 1: Sembunyikan Lajur Skor dan Rumusan */
+        /* Sembunyikan Lajur Skor */
         .skor-column {
             display: none;
         }
-        #rumusan-skor-table, #rumusan-skor-table + .info-box {
+        /* Sembunyikan baris Jumlah & Tahap di Rumusan */
+        .sembunyi-di-web {
             display: none;
         }
 
@@ -605,7 +606,7 @@
                                 <tr><td>BAHAGIAN B (20%)</td><td><input type="text" id="skor-b-rumusan" readonly></td><td><input type="text" id="peratus-b-rumusan" readonly></td></tr>
                                 <tr><td>BAHAGIAN C (40%)</td><td><input type="text" id="skor-c-rumusan" readonly></td><td><input type="text" id="peratus-c-rumusan" readonly></td></tr>
                             </tbody>
-                            <tfoot>
+                            <tfoot class="sembunyi-di-web">
                                 <tr><td><strong>JUMLAH KESELURUHAN (%)</strong></td><td colspan="2"><input type="text" id="jumlah-keseluruhan" readonly></td></tr>
                                 <tr><td><strong>TAHAP</strong></td><td colspan="2"><input type="text" id="tahap-pencapaian" readonly></td></tr>
                             </tfoot>

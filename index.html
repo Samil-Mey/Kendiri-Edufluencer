@@ -46,7 +46,7 @@
             z-index: 100;
         }
         
-        .sidebar.disabled {
+        .sidebar.disabled .nav-link:not(.active) {
             pointer-events: none;
             opacity: 0.6;
         }
@@ -90,6 +90,7 @@
         .sidebar ul li a.completed {
             background-color: #27ae60; /* Warna hijau */
         }
+
 
         /* Kandungan Utama di Kanan */
         .content {
@@ -432,6 +433,11 @@
             h2 { font-size: 1.2rem; }
         }
 
+        /* Sembunyikan baris Jumlah & Tahap di Rumusan */
+        .sembunyi-di-web {
+            display: none;
+        }
+
     </style>
 </head>
 <body>
@@ -504,15 +510,17 @@
                         <h4>4. Jumlah Skor</h4>
                         <p>a. Jumlahkan semua skor yang diperoleh.<br>
                            b. Bandingkan jumlah skor dengan tahap penilaian berikut:</p>
-                        <table>
-                            <thead><tr><th>Skor</th><th>Tahap</th></tr></thead>
-                            <tbody>
-                                <tr><td>90 – 100</td><td>#TopInfluencer</td></tr>
-                                <tr><td>80 – 89.99</td><td>#Trendsetter</td></tr>
-                                <tr><td>60 – 79.99</td><td>#NextGen</td></tr>
-                                <tr><td>0 – 59.99</td><td>#Starter</td></tr>
-                            </tbody>
-                        </table>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead><tr><th>Skor</th><th>Tahap</th></tr></thead>
+                                <tbody>
+                                    <tr><td>90 – 100</td><td>#TopInfluencer</td></tr>
+                                    <tr><td>80 – 89.99</td><td>#Trendsetter</td></tr>
+                                    <tr><td>60 – 79.99</td><td>#NextGen</td></tr>
+                                    <tr><td>0 – 59.99</td><td>#Starter</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
 
                         <h4>5. Kerahsiaan</h4>
                         <p>Penilaian kendiri ini adalah untuk kegunaan peribadi dan pembangunan profesional. Maklumat yang diisi tidak akan menjejaskan penilaian rasmi kecuali diminta untuk rujukan oleh pihak KPM.</p>
@@ -660,7 +668,7 @@
                                 <tr><td>BAHAGIAN B (20%)</td><td><input type="text" id="skor-b-rumusan" readonly></td><td><input type="text" id="peratus-b-rumusan" readonly></td></tr>
                                 <tr><td>BAHAGIAN C (40%)</td><td><input type="text" id="skor-c-rumusan" readonly></td><td><input type="text" id="peratus-c-rumusan" readonly></td></tr>
                             </tbody>
-                            <tfoot>
+                            <tfoot class="sembunyi-di-web">
                                 <tr><td><strong>JUMLAH KESELURUHAN (%)</strong></td><td colspan="2"><input type="text" id="jumlah-keseluruhan" readonly></td></tr>
                                 <tr><td><strong>TAHAP</strong></td><td colspan="2"><input type="text" id="tahap-pencapaian" readonly></td></tr>
                             </tfoot>
@@ -996,16 +1004,13 @@
                 }
 
                 if (y > 220) { doc.addPage(); y = 15; }
-                addText('Rumusan Skor Keseluruhan', 14, 'bold');
+                addText('Rumusan Skor', 14, 'bold');
                 const rumusanData = [
                     ['Bahagian A', document.getElementById('skor-a-rumusan').value, document.getElementById('peratus-a-rumusan').value + ' %'],
                     ['Bahagian B', document.getElementById('skor-b-rumusan').value, document.getElementById('peratus-b-rumusan').value + ' %'],
                     ['Bahagian C', document.getElementById('skor-c-rumusan').value, document.getElementById('peratus-c-rumusan').value + ' %'],
                 ];
                 doc.autoTable({ head: [['Komponen', 'Skor Diperoleh', 'Peratus (%)']], body: rumusanData, startY: y });
-                y = doc.autoTable.previous.finalY + 5;
-                addText(`Jumlah Keseluruhan: ${document.getElementById('jumlah-keseluruhan').value} %`, 12, 'bold');
-                addText(`Tahap: ${document.getElementById('tahap-pencapaian').value}`, 12, 'bold');
                 
                 doc.save(`Borang Penilaian Kendiri - ${docName}.pdf`);
             } catch (error) {
@@ -1056,6 +1061,12 @@
                             initializeTables();
                             calculateScores();
                             validateForm();
+                            
+                            // Reset UI
+                            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('completed'));
+                            document.querySelectorAll('.section-unlock-btn, .next-btn').forEach(btn => btn.style.display = 'none');
+                            document.querySelectorAll('.section-lock-btn').forEach(btn => btn.style.display = 'inline-block');
+                            
                             showTab('pengenalan');
                             sidebar.classList.add('disabled');
                             submitStatus.textContent = '';

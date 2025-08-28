@@ -409,10 +409,6 @@
             h2 { font-size: 1.2rem; }
         }
 
-        /* Sembunyikan Lajur Skor */
-        .skor-column {
-            display: none;
-        }
         /* Sembunyikan baris Jumlah & Tahap di Rumusan */
         .sembunyi-di-web {
             display: none;
@@ -526,7 +522,7 @@
                     <p><strong>Arahan:</strong> Sila senaraikan sehingga lima (5) aktiviti dan bukti perkongsian amalan yang telah dilaksanakan.</p>
                     <div class="table-wrapper">
                         <table id="bahagian-a-table">
-                            <thead><tr><th>Bil</th><th>Jenis Perkongsian</th><th>Tajuk</th><th>Medium</th><th>Pautan/Bukti</th><th class="skor-column">Skor</th></tr></thead>
+                            <thead><tr><th>Bil</th><th>Jenis Perkongsian</th><th>Tajuk</th><th>Medium</th><th>Pautan/Bukti</th><th>Skor</th></tr></thead>
                             <tbody id="table-body-a"></tbody>
                         </table>
                     </div>
@@ -555,7 +551,7 @@
                      <p><strong>Arahan:</strong> Sila nyatakan bentuk sumbangan khidmat profesional yang telah diberikan.</p>
                      <div class="table-wrapper">
                          <table id="bahagian-b-table">
-                            <thead><tr><th>Bil</th><th>Program</th><th>Peranan</th><th>Tarikh/Tahun</th><th>Penganjur</th><th class="skor-column">Skor</th></tr></thead>
+                            <thead><tr><th>Bil</th><th>Program</th><th>Peranan</th><th>Tarikh/Tahun</th><th>Penganjur</th><th>Skor</th></tr></thead>
                             <tbody id="table-body-b"></tbody>
                         </table>
                      </div>
@@ -585,7 +581,7 @@
                       <div class="rubric-legend"><strong>Skala: 1</strong>=Sangat Lemah, <strong>2</strong>=Lemah, <strong>3</strong>=Sederhana, <strong>4</strong>=Baik, <strong>5</strong>=Cemerlang</div>
                       <div class="table-wrapper">
                         <table id="table-c">
-                            <thead><tr><th>Bil</th><th>Kriteria</th><th class="skor-column">Skor (1-5)</th></tr></thead>
+                            <thead><tr><th>Bil</th><th>Kriteria</th><th>Skor (1-5)</th></tr></thead>
                             <tbody id="table-body-c"></tbody>
                         </table>
                       </div>
@@ -642,7 +638,6 @@
                 <input type="hidden" name="jumlah_skor_b" id="hidden_jumlah_skor_b">
                 <input type="hidden" name="jumlah_skor_c" id="hidden_jumlah_skor_c">
                 <input type="hidden" name="skor_keseluruhan" id="hidden_skor_keseluruhan">
-                <!-- PERUBAHAN 2: Tambah input tersembunyi untuk Tahap -->
                 <input type="hidden" name="tahap" id="hidden_tahap">
             </form>
             
@@ -686,7 +681,7 @@
                     <td><input type="text" name="a_tajuk_${i}"></td>
                     <td><input type="text" name="a_medium_${i}"></td>
                     <td><input type="url" name="a_pautan_${i}"></td>
-                    <td class="skor-column">${createScoreSelect('a', i)}</td>
+                    <td>${createScoreSelect('a', i)}</td>
                 `;
             }
             
@@ -701,7 +696,7 @@
                     <td><input type="text" name="b_peranan_${i}"></td>
                     <td><input type="text" name="b_tarikh_${i}"></td>
                     <td><input type="text" name="b_penganjur_${i}"></td>
-                    <td class="skor-column">${createScoreSelect('b', i)}</td>
+                    <td>${createScoreSelect('b', i)}</td>
                 `;
             }
 
@@ -721,7 +716,7 @@
                     newRow.innerHTML = `
                         <td>${bilC}</td>
                         <td>${kriteria}</td>
-                        <td class="skor-column"><div class="select-wrapper"><select name="c_skor_${bilC}" class="skor-c skor-select"></select></div></td>
+                        <td><div class="select-wrapper"><select name="c_skor_${bilC}" class="skor-c skor-select"></select></div></td>
                     `;
                     const select = newRow.querySelector('select');
                     for (let i=0; i<=5; i++) {
@@ -790,7 +785,6 @@
             document.getElementById('hidden_jumlah_skor_b').value = totalB;
             document.getElementById('hidden_jumlah_skor_c').value = totalC;
             document.getElementById('hidden_skor_keseluruhan').value = jumlahKeseluruhan.toFixed(2);
-            // PERUBAHAN 3: Kemas kini nilai input tersembunyi untuk Tahap
             document.getElementById('hidden_tahap').value = tahap;
         }
 

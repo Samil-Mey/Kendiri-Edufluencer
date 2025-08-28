@@ -87,12 +87,11 @@
             flex-grow: 1;
             padding: 40px;
             transition: margin-left 0.3s ease-in-out;
-            margin-left: 280px; /* Match sidebar width */
+            margin-left: 280px;
         }
         
         .tab-content {
             display: none; /* Sembunyi secara lalai */
-            animation: fadeIn 0.5s;
         }
         .tab-content.active {
             display: block; /* Hanya tunjuk yang aktif */
@@ -381,6 +380,12 @@
         }
 
         /* Media Queries untuk Paparan Responsif */
+        @media (min-width: 1024px) {
+            .content {
+                margin-left: 280px;
+            }
+        }
+        
         @media (max-width: 1023px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -431,7 +436,7 @@
         <!-- Navigasi Tab di Sebelah Kiri -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-logo">
-                <img src="https://i.imgur.com/your_logo.png" alt="Logo Sidebar">
+                <img src="Imej1.png" alt="Logo Sidebar">
             </div>
             <ul>
                 <li><a href="#pengenalan" class="nav-link active">Pengenalan</a></li>
@@ -447,13 +452,12 @@
         <!-- Kandungan Borang di Sebelah Kanan -->
         <main class="content">
             <button type="button" class="menu-toggle" id="menu-toggle">☰</button>
-            <!-- PERUBAHAN 1: Tambah 'name' pada tag form -->
             <form name="submit-to-google-sheet" id="edufluencer-form">
                 
                 <!-- =============== Bahagian Pengenalan =============== -->
                 <section id="pengenalan" class="tab-content active">
                     <div class="header-logo">
-                        <img src="https://i.imgur.com/your_header.gif" alt="Logo Organisasi">
+                        <img src="Imej2.gif" alt="Logo Organisasi">
                     </div>
                     <h1>Borang Penilaian Kendiri Edufluencer KPM</h1>
                     <div class="info-box">
@@ -623,13 +627,12 @@
                     <button type="submit" id="submit-btn" class="btn submit-btn">Hantar</button>
                     <p id="submit-status"></p>
                 </section>
-                
-                <!-- PERUBAHAN 2: Tambah input tersembunyi untuk hantar skor ke Google Sheet -->
+
+                <!-- Hidden inputs to send summary scores -->
                 <input type="hidden" name="jumlah_skor_a" id="hidden_jumlah_skor_a">
                 <input type="hidden" name="jumlah_skor_b" id="hidden_jumlah_skor_b">
                 <input type="hidden" name="jumlah_skor_c" id="hidden_jumlah_skor_c">
                 <input type="hidden" name="skor_keseluruhan" id="hidden_skor_keseluruhan">
-
             </form>
             
             <footer>
@@ -691,7 +694,7 @@
                 `;
             }
 
-            // Bina Jadual C dengan kaedah yang stabil
+            // FIX: Bina Jadual C dengan kaedah yang stabil
             const tableBodyC = document.getElementById('table-body-c');
             tableBodyC.innerHTML = ''; // Kosongkan dahulu
             let bilC = 1;
@@ -731,9 +734,9 @@
                 link.classList.add('active');
                 const targetId = link.getAttribute('href').substring(1);
                 tabContents.forEach(content => {
-                    content.classList.remove('active');
+                    content.style.display = 'none'; // Sembunyikan semua tab
                 });
-                document.getElementById(targetId).classList.add('active');
+                document.getElementById(targetId).style.display = 'block'; // Tunjuk tab yang dipilih sahaja
                 
                 if (window.innerWidth < 1024) {
                     sidebar.classList.remove('open');
@@ -771,7 +774,7 @@
             else if (jumlahKeseluruhan >= 60) tahap = 'Next Gen';
             document.getElementById('tahap-pencapaian').value = tahap;
 
-            // PERUBAHAN 3: Kemas kini nilai input tersembunyi
+            // Update hidden inputs for submission
             document.getElementById('hidden_jumlah_skor_a').value = totalA;
             document.getElementById('hidden_jumlah_skor_b').value = totalB;
             document.getElementById('hidden_jumlah_skor_c').value = totalC;
@@ -826,7 +829,7 @@
         // --- LOGIK MUAT TURUN PDF (VERSI DIPERBAIKI) ---
         document.getElementById('download-pdf-btn').addEventListener('click', function() {
             const loader = document.getElementById('pdf-loader');
-            loader.classList.add('show');
+            loader.style.display = 'flex';
 
             try {
                 const { jsPDF } = window.jspdf;
@@ -921,7 +924,7 @@
                 console.error("Ralat semasa menjana PDF:", error);
                 alert("Maaf, terdapat ralat semasa menjana PDF. Sila cuba lagi.");
             } finally {
-                loader.classList.remove('show');
+                loader.style.display = 'none';
             }
         });
 
@@ -941,6 +944,13 @@
 
         document.getElementById('confirm-yes').addEventListener('click', function() {
             confirmationModal.classList.remove('show');
+            
+            // PEMBETULAN: Aktifkan semula semua input sebelum hantar
+            const allInputs = form.querySelectorAll('input, select');
+            allInputs.forEach(input => {
+                input.disabled = false;
+            });
+
             const submitStatus = document.getElementById('submit-status');
             const scriptURL = 'https://script.google.com/macros/s/AKfycbxHwgf4G5jVQA1dwBgkKKchI0J7edU-dUqjQq_94tfLmj4B_QuN2Qr3dgdBjJKY2mMhzg/exec';
             const formData = new FormData(form);
@@ -976,8 +986,6 @@
         initializeTables();
         calculateScores();
         validateForm(); 
-        // Set tab pertama sebagai aktif semasa mula
-        document.querySelector('.nav-link[href="#pengenalan"]').click();
     });
     </script>
 </body>

@@ -87,10 +87,12 @@
             flex-grow: 1;
             padding: 40px;
             transition: margin-left 0.3s ease-in-out;
+            margin-left: 280px; /* Match sidebar width */
         }
         
         .tab-content {
             display: none; /* Sembunyi secara lalai */
+            animation: fadeIn 0.5s;
         }
         .tab-content.active {
             display: block; /* Hanya tunjuk yang aktif */
@@ -379,12 +381,6 @@
         }
 
         /* Media Queries untuk Paparan Responsif */
-        @media (min-width: 1024px) {
-            .content {
-                margin-left: 280px;
-            }
-        }
-        
         @media (max-width: 1023px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -435,7 +431,7 @@
         <!-- Navigasi Tab di Sebelah Kiri -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-logo">
-                <img src="Imej1.png" alt="Logo Sidebar">
+                <img src="https://i.imgur.com/your_logo.png" alt="Logo Sidebar">
             </div>
             <ul>
                 <li><a href="#pengenalan" class="nav-link active">Pengenalan</a></li>
@@ -451,12 +447,13 @@
         <!-- Kandungan Borang di Sebelah Kanan -->
         <main class="content">
             <button type="button" class="menu-toggle" id="menu-toggle">☰</button>
-            <form id="edufluencer-form">
+            <!-- PERUBAHAN 1: Tambah 'name' pada tag form -->
+            <form name="submit-to-google-sheet" id="edufluencer-form">
                 
                 <!-- =============== Bahagian Pengenalan =============== -->
                 <section id="pengenalan" class="tab-content active">
                     <div class="header-logo">
-                        <img src="Imej2.gif" alt="Logo Organisasi">
+                        <img src="https://i.imgur.com/your_header.gif" alt="Logo Organisasi">
                     </div>
                     <h1>Borang Penilaian Kendiri Edufluencer KPM</h1>
                     <div class="info-box">
@@ -570,15 +567,15 @@
 
                 <!-- =============== Bahagian C: Dimensi Kualiti (40%) =============== -->
                 <section id="bahagian-c" class="tab-content">
-                     <h2>BAHAGIAN C: DIMENSI KUALITI (40%)</h2>
-                     <p><strong>Arahan:</strong> Tandakan pada ruangan 1–5 berdasarkan tahap pencapaian anda.</p>
-                     <div class="rubric-legend"><strong>Skala: 1</strong>=Sangat Lemah, <strong>2</strong>=Lemah, <strong>3</strong>=Sederhana, <strong>4</strong>=Baik, <strong>5</strong>=Cemerlang</div>
-                     <div class="table-wrapper">
+                      <h2>BAHAGIAN C: DIMENSI KUALITI (40%)</h2>
+                      <p><strong>Arahan:</strong> Tandakan pada ruangan 1–5 berdasarkan tahap pencapaian anda.</p>
+                      <div class="rubric-legend"><strong>Skala: 1</strong>=Sangat Lemah, <strong>2</strong>=Lemah, <strong>3</strong>=Sederhana, <strong>4</strong>=Baik, <strong>5</strong>=Cemerlang</div>
+                      <div class="table-wrapper">
                         <table id="table-c">
                             <thead><tr><th>Bil</th><th>Kriteria</th><th>Skor (1-5)</th></tr></thead>
                             <tbody id="table-body-c"></tbody>
                         </table>
-                     </div>
+                      </div>
                     <div class="section-controls">
                         <button type="button" class="btn section-lock-btn" data-section="bahagian-c">Selesai</button>
                         <button type="button" class="btn section-unlock-btn" data-section="bahagian-c">Kemaskini</button>
@@ -603,11 +600,11 @@
                         </table>
                     </div>
                      <div class="info-box">
-                        <h4>Penerangan Tahap</h4>
-                        <p><strong>TopInfluencer (90-100):</strong> Edufluencer berimpak tinggi yang konsisten, inovatif, dan menjadi rujukan utama dalam komuniti pendidikan.</p>
-                        <p><strong>Trendsetter (80-89.99):</strong> Edufluencer kreatif dan inovatif yang mampu mencetuskan idea baharu serta menginspirasi warga pendidikan.</p>
-                        <p><strong>Next Gen (60-79.99):</strong> Edufluencer aktif dengan kandungan asas yang bermanfaat dan berpotensi berkembang ke tahap lebih tinggi.</p>
-                        <p><strong>Starter (0-59.99):</strong> Edufluencer baharu yang masih memerlukan bimbingan untuk meningkatkan mutu kandungan dan impak pendidikan.</p>
+                         <h4>Penerangan Tahap</h4>
+                         <p><strong>TopInfluencer (90-100):</strong> Edufluencer berimpak tinggi yang konsisten, inovatif, dan menjadi rujukan utama dalam komuniti pendidikan.</p>
+                         <p><strong>Trendsetter (80-89.99):</strong> Edufluencer kreatif dan inovatif yang mampu mencetuskan idea baharu serta menginspirasi warga pendidikan.</p>
+                         <p><strong>Next Gen (60-79.99):</strong> Edufluencer aktif dengan kandungan asas yang bermanfaat dan berpotensi berkembang ke tahap lebih tinggi.</p>
+                         <p><strong>Starter (0-59.99):</strong> Edufluencer baharu yang masih memerlukan bimbingan untuk meningkatkan mutu kandungan dan impak pendidikan.</p>
                     </div>
                 </section>
 
@@ -626,6 +623,13 @@
                     <button type="submit" id="submit-btn" class="btn submit-btn">Hantar</button>
                     <p id="submit-status"></p>
                 </section>
+                
+                <!-- PERUBAHAN 2: Tambah input tersembunyi untuk hantar skor ke Google Sheet -->
+                <input type="hidden" name="jumlah_skor_a" id="hidden_jumlah_skor_a">
+                <input type="hidden" name="jumlah_skor_b" id="hidden_jumlah_skor_b">
+                <input type="hidden" name="jumlah_skor_c" id="hidden_jumlah_skor_c">
+                <input type="hidden" name="skor_keseluruhan" id="hidden_skor_keseluruhan">
+
             </form>
             
             <footer>
@@ -687,7 +691,7 @@
                 `;
             }
 
-            // FIX: Bina Jadual C dengan kaedah yang stabil
+            // Bina Jadual C dengan kaedah yang stabil
             const tableBodyC = document.getElementById('table-body-c');
             tableBodyC.innerHTML = ''; // Kosongkan dahulu
             let bilC = 1;
@@ -727,9 +731,9 @@
                 link.classList.add('active');
                 const targetId = link.getAttribute('href').substring(1);
                 tabContents.forEach(content => {
-                    content.style.display = 'none'; // Sembunyikan semua tab
+                    content.classList.remove('active');
                 });
-                document.getElementById(targetId).style.display = 'block'; // Tunjuk tab yang dipilih sahaja
+                document.getElementById(targetId).classList.add('active');
                 
                 if (window.innerWidth < 1024) {
                     sidebar.classList.remove('open');
@@ -766,6 +770,12 @@
             else if (jumlahKeseluruhan >= 80) tahap = 'Trendsetter';
             else if (jumlahKeseluruhan >= 60) tahap = 'Next Gen';
             document.getElementById('tahap-pencapaian').value = tahap;
+
+            // PERUBAHAN 3: Kemas kini nilai input tersembunyi
+            document.getElementById('hidden_jumlah_skor_a').value = totalA;
+            document.getElementById('hidden_jumlah_skor_b').value = totalB;
+            document.getElementById('hidden_jumlah_skor_c').value = totalC;
+            document.getElementById('hidden_skor_keseluruhan').value = jumlahKeseluruhan.toFixed(2);
         }
 
         // --- EVENT LISTENERS ---
@@ -816,7 +826,7 @@
         // --- LOGIK MUAT TURUN PDF (VERSI DIPERBAIKI) ---
         document.getElementById('download-pdf-btn').addEventListener('click', function() {
             const loader = document.getElementById('pdf-loader');
-            loader.style.display = 'flex';
+            loader.classList.add('show');
 
             try {
                 const { jsPDF } = window.jspdf;
@@ -911,7 +921,7 @@
                 console.error("Ralat semasa menjana PDF:", error);
                 alert("Maaf, terdapat ralat semasa menjana PDF. Sila cuba lagi.");
             } finally {
-                loader.style.display = 'none';
+                loader.classList.remove('show');
             }
         });
 
@@ -966,6 +976,8 @@
         initializeTables();
         calculateScores();
         validateForm(); 
+        // Set tab pertama sebagai aktif semasa mula
+        document.querySelector('.nav-link[href="#pengenalan"]').click();
     });
     </script>
 </body>

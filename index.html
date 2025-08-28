@@ -92,6 +92,7 @@
             flex-grow: 1;
             padding: 40px;
             transition: margin-left 0.3s ease-in-out;
+            margin-left: 280px;
         }
         
         .tab-content {
@@ -275,6 +276,8 @@
 
         .section-controls {
             margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
         }
         .section-lock-btn { background: #e74c3c; } /* Warna Merah */
         .section-lock-btn:hover { box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4); }
@@ -282,6 +285,8 @@
         .section-unlock-btn:hover { box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4); }
         .next-btn { background: #27ae60; display: none; }
         .next-btn:hover { box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4); }
+        .back-btn { background: #95a5a6; }
+        .back-btn:hover { box-shadow: 0 4px 15px rgba(149, 165, 166, 0.4); }
         
 
         .submit-btn {
@@ -466,7 +471,7 @@
         <!-- Kandungan Borang di Sebelah Kanan -->
         <main class="content">
             <button type="button" class="menu-toggle" id="menu-toggle">☰</button>
-            <form id="edufluencer-form">
+            <form name="submit-to-google-sheet" id="edufluencer-form">
                 
                 <!-- =============== Bahagian Pengenalan =============== -->
                 <section id="pengenalan" class="tab-content active">
@@ -558,6 +563,7 @@
                         </table>
                     </div>
                     <div class="section-controls">
+                        <button type="button" class="btn back-btn" data-prev="maklumat-diri">Kembali</button>
                         <button type="button" class="btn section-lock-btn" data-section="bahagian-a">Selesai</button>
                         <button type="button" class="btn section-unlock-btn" data-section="bahagian-a">Kemaskini</button>
                         <button type="button" class="btn next-btn" data-next="bahagian-b">Seterusnya</button>
@@ -588,6 +594,7 @@
                         </table>
                     </div>
                     <div class="section-controls">
+                        <button type="button" class="btn back-btn" data-prev="bahagian-a">Kembali</button>
                         <button type="button" class="btn section-lock-btn" data-section="bahagian-b">Selesai</button>
                         <button type="button" class="btn section-unlock-btn" data-section="bahagian-b">Kemaskini</button>
                         <button type="button" class="btn next-btn" data-next="bahagian-c">Seterusnya</button>
@@ -606,6 +613,7 @@
                         </table>
                      </div>
                     <div class="section-controls">
+                        <button type="button" class="btn back-btn" data-prev="bahagian-b">Kembali</button>
                         <button type="button" class="btn section-lock-btn" data-section="bahagian-c">Selesai</button>
                         <button type="button" class="btn section-unlock-btn" data-section="bahagian-c">Kemaskini</button>
                         <button type="button" class="btn next-btn" data-next="rumusan">Seterusnya</button>
@@ -615,7 +623,7 @@
                  <!-- =============== Bahagian Rumusan Skor =============== -->
                 <section id="rumusan" class="tab-content">
                     <h2>RUMUSAN SKOR KESELURUHAN</h2>
-                    <div class="table-wrapper">
+                    <div class="table-wrapper" id="rumusan-skor-table">
                         <table>
                             <thead><tr><th>Komponen</th><th>Skor Diperoleh</th><th>Peratus Skor Diperolehi (%)</th></tr></thead>
                             <tbody>
@@ -636,7 +644,8 @@
                         <p><strong>Next Gen (60-79.99):</strong> Edufluencer aktif dengan kandungan asas yang bermanfaat dan berpotensi berkembang ke tahap lebih tinggi.</p>
                         <p><strong>Starter (0-59.99):</strong> Edufluencer baharu yang masih memerlukan bimbingan untuk meningkatkan mutu kandungan dan impak pendidikan.</p>
                     </div>
-                     <div class="section-controls">
+                    <div class="section-controls">
+                        <button type="button" class="btn back-btn" data-prev="bahagian-c">Kembali</button>
                         <button type="button" class="btn next-btn" data-next="pengesahan" style="display: inline-block;">Seterusnya</button>
                     </div>
                 </section>
@@ -652,10 +661,18 @@
                     <div class="form-group"><label for="email_pengesahan">Emel:</label><input type="email" id="email_pengesahan" name="email_pengesahan" required></div>
                     <div class="form-group"><label for="telefon_pengesahan">No. Telefon:</label><input type="tel" id="telefon_pengesahan" name="telefon_pengesahan" required></div>
                     <div class="form-group"><label for="tarikh_pengesahan">Tarikh:</label><input type="text" id="tarikh_pengesahan" name="tarikh_pengesahan" readonly></div>
+                    <button type="button" class="btn back-btn" data-prev="rumusan">Kembali</button>
                     <button type="button" id="download-pdf-btn" class="btn pdf-btn">Muat Turun PDF</button>
                     <button type="submit" id="submit-btn" class="btn submit-btn">Hantar</button>
                     <p id="submit-status"></p>
                 </section>
+                
+                <!-- Hidden inputs to send summary scores -->
+                <input type="hidden" name="jumlah_skor_a" id="hidden_jumlah_skor_a">
+                <input type="hidden" name="jumlah_skor_b" id="hidden_jumlah_skor_b">
+                <input type="hidden" name="jumlah_skor_c" id="hidden_jumlah_skor_c">
+                <input type="hidden" name="skor_keseluruhan" id="hidden_skor_keseluruhan">
+                <input type="hidden" name="tahap" id="hidden_tahap">
             </form>
             
             <footer>
@@ -774,11 +791,11 @@
             sidebar.classList.remove('disabled');
         });
         
-        // Event listener untuk butang "Seterusnya"
-        document.querySelectorAll('.next-btn').forEach(btn => {
+        // Event listener untuk butang "Seterusnya" dan "Kembali"
+        document.querySelectorAll('.next-btn, .back-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                const nextTabId = this.dataset.next;
-                showTab(nextTabId);
+                const targetTabId = this.dataset.next || this.dataset.prev;
+                showTab(targetTabId);
             });
         });
 
@@ -825,6 +842,13 @@
             else if (jumlahKeseluruhan >= 80) tahap = 'Trendsetter';
             else if (jumlahKeseluruhan >= 60) tahap = 'Next Gen';
             document.getElementById('tahap-pencapaian').value = tahap;
+
+            // Update hidden inputs for submission
+            document.getElementById('hidden_jumlah_skor_a').value = totalA;
+            document.getElementById('hidden_jumlah_skor_b').value = totalB;
+            document.getElementById('hidden_jumlah_skor_c').value = totalC;
+            document.getElementById('hidden_skor_keseluruhan').value = jumlahKeseluruhan.toFixed(2);
+            document.getElementById('hidden_tahap').value = tahap;
         }
 
         // --- EVENT LISTENERS ---
@@ -881,6 +905,13 @@
 
         document.getElementById('confirm-yes').addEventListener('click', function() {
             confirmationModal.classList.remove('show');
+            
+            // PEMBETULAN: Aktifkan semula semua input sebelum hantar
+            const allInputs = form.querySelectorAll('input, select');
+            allInputs.forEach(input => {
+                input.disabled = false;
+            });
+
             const submitStatus = document.getElementById('submit-status');
             const scriptURL = 'https://script.google.com/macros/s/AKfycbxHwgf4G5jVQA1dwBgkKKchI0J7edU-dUqjQq_94tfLmj4B_QuN2Qr3dgdBjJKY2mMhzg/exec';
             const formData = new FormData(form);

@@ -998,13 +998,13 @@
                     const { jsPDF } = window.jspdf;
                     const doc = new jsPDF();
                     const docName = document.getElementById('nama').value || 'responden';
-                    let y = 15;
+                   let y = 15;
 
-                    // --- TAMBAH LOGO DARI BASE64 ---
-                    if (base64Img) {
-                        doc.addImage(base64Img, 'PNG', 85, 15, 40, 15); // (imej, format, x, y, lebar, tinggi)
-                        y = 40; // Beri ruang selepas logo
-                    }
+                    // --- LOGO DI TENGAH (DIPADAM) ---
+                    // if (base64Img) {
+                    //     doc.addImage(base64Img, 'PNG', 85, 15, 40, 15); 
+                    //     y = 40; 
+                    // }
                     
                     const commonTableOptions = {
                         didDrawPage: data => addFooter(doc),
@@ -1178,6 +1178,7 @@
     </script>
 </body>
 </html>
+
 
 
 

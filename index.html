@@ -1042,6 +1042,21 @@
                     ['JUMLAH KESELURUHAN (%)', '', document.getElementById('jumlah-keseluruhan').value + ' %']
                 ];
                 doc.autoTable({ head: [['Komponen', 'Skor Diperoleh', 'Peratus (%)']], body: rumusanData, startY: y });
+
+                // --- Mula Kod Kekaki PDF ---
+                let pageHeight = doc.internal.pageSize.getHeight();
+                doc.setFontSize(8);
+
+                // Baris pertama (Penafian) - Warna Merah
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(255, 0, 0); // <-- KOD RGB UNTUK MERAH
+                doc.text('Dokumen ini dijana untuk simpanan peribadi sahaja dan tiada salinan disimpan pada sistem.', 10, pageHeight - 10);
+
+                // Baris kedua (Copyright) - Warna Biru Gelap
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(0, 0, 139); // <-- KOD RGB UNTUK BIRU GELAP
+                doc.text('DMU | MFB-ASAS | ©2025', 10, pageHeight - 5);
+                // --- Tamat Kod Kekaki PDF ---
                 
                 doc.save(`Borang Penilaian Kendiri - ${docName}.pdf`);
             } catch (error) {
@@ -1133,6 +1148,7 @@
     </script>
 </body>
 </html>
+
 
 
 

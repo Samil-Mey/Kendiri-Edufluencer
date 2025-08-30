@@ -953,7 +953,7 @@
         document.getElementById('pengesahan').addEventListener('input', validateForm);
         document.getElementById('pengesahan').addEventListener('change', validateForm);
 
-        // --- LOGIK MUAT TURUN PDF (VERSI PROFESIONAL) ---
+       // --- LOGIK MUAT TURUN PDF (VERSI PROFESIONAL V2) ---
         const downloadPdfBtn = document.getElementById('download-pdf-modal-btn');
         
         function addFooter(docInstance) {
@@ -970,148 +970,130 @@
                 docInstance.text('DMU | MFB-ASAS | ©2025', 105, pageHeight - 5, { align: 'center' });
             }
         }
+        
+        // Fungsi untuk menukar imej URL ke Base64
+        function imageUrlToBase64(url, callback) {
+            let xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                let reader = new FileReader();
+                reader.onloadend = function() {
+                    callback(reader.result);
+                }
+                reader.readAsDataURL(xhr.response);
+            };
+            xhr.open('GET', url);
+            xhr.responseType = 'blob';
+            xhr.send();
+        }
 
         function generatePdf() {
             const loader = document.getElementById('pdf-loader');
             loader.style.display = 'flex';
-
-            try {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                const docName = document.getElementById('nama').value || 'responden';
-                let y = 15;
-
-               // --- LOGO DI TENGAH ---
+            
+            // --- URL LOGO ANDA ---
             const logoUrl = 'https://raw.githubusercontent.com/Samil-Mey/Kendiri-Edufluencer/main/Imej1.png';
-            try {
-                // Nota: Memuat imej dari URL memerlukan masa dan boleh jadi rumit.
-                // Untuk sekarang, kita sediakan ruang untuknya.
-                    } catch (e) { console.error("Logo gagal dimuat."); }
-                    y = 40; // Beri ruang untuk logo jika anda berjaya memaparkannya
-                
-                // --- Opsyen Gaya Umum untuk Jadual ---
-                const commonTableOptions = {
-                    didDrawPage: data => addFooter(doc),
-                    styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
-                    headStyles: { fillColor: [44, 62, 80], textColor: 255, fontStyle: 'bold' },
-                    alternateRowStyles: { fillColor: [245, 245, 245] },
-                };
 
-                // --- Muka Surat 1: Tajuk & Maklumat Peribadi ---
-                doc.setFontSize(16);
-                doc.setFont('helvetica', 'bold');
-                doc.text('Borang Penilaian Kendiri Edufluencer KPM', 105, y, { align: 'center' });
-                y += 15;
+            imageUrlToBase64(logoUrl, function(base64Img){
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    const docName = document.getElementById('nama').value || 'responden';
+                    let y = 15;
 
-                doc.setFontSize(12);
-                doc.setFont('helvetica', 'bold');
-                doc.text('Maklumat Peribadi', 14, y);
-                y += 6;
+                    // --- TAMBAH LOGO DARI BASE64 ---
+                    if (base64Img) {
+                        doc.addImage(base64Img, 'PNG', 85, 15, 40, 15); // (imej, format, x, y, lebar, tinggi)
+                        y = 40; // Beri ruang selepas logo
+                    }
+                    
+                    const commonTableOptions = {
+                        didDrawPage: data => addFooter(doc),
+                        styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
+                        headStyles: { fillColor: [44, 62, 80], textColor: 255, fontStyle: 'bold' },
+                        alternateRowStyles: { fillColor: [245, 245, 245] },
+                    };
 
-                doc.setFontSize(9);
-                doc.setFont('helvetica', 'normal');
-                const maklumat = { "Nama": "nama", "No. KP": "nokp", "Jawatan": "jawatan", "Gred": "gred", "Negeri": "negeri", "Nama Institusi": "sekolah", "Kategori": "kategori" };
-                for (const [label, id] of Object.entries(maklumat)) {
-                     doc.text(`${label}: ${document.getElementById(id).value}`, 14, y);
-                     y += 5;
+                    doc.setFontSize(16);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Borang Penilaian Kendiri Edufluencer KPM', 105, y, { align: 'center' });
+                    y += 15;
+
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Maklumat Peribadi', 14, y);
+                    y += 6;
+
+                    doc.setFontSize(9);
+                    doc.setFont('helvetica', 'normal');
+                    const maklumat = { "Nama": "nama", "No. KP": "nokp", "Jawatan": "jawatan", "Gred": "gred", "Negeri": "negeri", "Nama Institusi": "sekolah", "Kategori": "kategori" };
+                    for (const [label, id] of Object.entries(maklumat)) {
+                         doc.text(`${label}: ${document.getElementById(id).value}`, 14, y);
+                         y += 5;
+                    }
+                    y += 5;
+
+                    const socialTableBody = Array.from(document.querySelectorAll('#social-media-table tbody tr')).map(row => {
+                        const pelantarCell = row.cells[0];
+                        let pelantar = pelantarCell.innerText;
+                        if (pelantarCell.querySelector('input')) pelantar = pelantarCell.querySelector('input').value;
+                        return [pelantar, row.querySelector('input[name^="social_akaun"]').value, row.querySelector('input[name^="social_followers"]').value];
+                    });
+                    doc.autoTable({ ...commonTableOptions, head: [['Pelantar', 'Nama Akaun', 'Bilangan Followers']], body: socialTableBody, startY: y });
+                    y = doc.autoTable.previous.finalY + 10;
+
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Bahagian A: Perkongsian Amalan', 14, y);
+                    y += 6;
+                    const partATableBody = Array.from(document.querySelectorAll('#bahagian-a-table tbody tr')).map(row => [
+                        row.cells[0].innerText, row.querySelector('input[name^="a_jenis_"]').value, row.querySelector('input[name^="a_tajuk_"]').value, row.querySelector('input[name^="a_medium_"]').value, row.querySelector('.a-skor').value
+                    ]);
+                    doc.autoTable({ ...commonTableOptions, head: [['Bil', 'Jenis Perkongsian', 'Tajuk', 'Medium', 'Skor']], body: partATableBody, startY: y, columnStyles: { 0: { cellWidth: 10 }, 1: { cellWidth: 40 }, 2: { cellWidth: 'auto' }, 3: { cellWidth: 30 }, 4: { cellWidth: 15 } } });
+                    y = doc.autoTable.previous.finalY + 10;
+                    
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Bahagian B: Sumbangan Khidmat Profesional', 14, y);
+                    y += 6;
+                    const partBTableBody = Array.from(document.querySelectorAll('#bahagian-b-table tbody tr')).map(row => [
+                        row.cells[0].innerText, row.querySelector('input[name^="b_program_"]').value, row.querySelector('input[name^="b_peranan_"]').value, row.querySelector('input[name^="b_tarikh_"]').value, row.querySelector('input[name^="b_penganjur_"]').value, row.querySelector('.b-skor').value
+                    ]);
+                    doc.autoTable({ ...commonTableOptions, head: [['Bil', 'Program', 'Peranan', 'Tarikh', 'Penganjur', 'Skor']], body: partBTableBody, startY: y, columnStyles: { 0: { cellWidth: 10 }, 1: { cellWidth: 'auto' }, 2: { cellWidth: 35 }, 3: { cellWidth: 20 }, 4: { cellWidth: 35 }, 5: { cellWidth: 15 } } });
+                    
+                    doc.addPage();
+                    y = 15;
+                    
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Bahagian C: Dimensi Kualiti', 14, y);
+                    y += 6;
+                    const partCTableBody = Array.from(document.querySelectorAll('#table-c tbody tr:not(.header-row)')).map(row => [
+                        row.cells[0].innerText, row.cells[1].innerText, row.querySelector('.skor-c').value
+                    ]);
+                    doc.autoTable({ ...commonTableOptions, head: [['Bil', 'Kriteria', 'Skor']], body: partCTableBody, startY: y, columnStyles: { 0: { cellWidth: 10 }, 1: { cellWidth: 'auto' }, 2: { cellWidth: 15 } } });
+                    y = doc.autoTable.previous.finalY + 10;
+
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Rumusan Skor', 14, y);
+                    y += 6;
+                    const rumusanData = [
+                        ['Bahagian A', document.getElementById('skor-a-rumusan').value, document.getElementById('peratus-a-rumusan').value + ' %'],
+                        ['Bahagian B', document.getElementById('skor-b-rumusan').value, document.getElementById('peratus-b-rumusan').value + ' %'],
+                        ['Bahagian C', document.getElementById('skor-c-rumusan').value, document.getElementById('peratus-c-rumusan').value + ' %'],
+                        ['JUMLAH KESELURUHAN (%)', '', document.getElementById('jumlah-keseluruhan').value + ' %']
+                    ];
+                    doc.autoTable({ ...commonTableOptions, head: [['Komponen', 'Skor Diperoleh', 'Peratus (%)']], body: rumusanData, startY: y });
+                    
+                    addFooter(doc);
+                    doc.save(`Borang Penilaian Kendiri - ${docName}.pdf`);
+                } catch (error) {
+                    console.error("Ralat semasa menjana PDF:", error);
+                    alert("Maaf, terdapat ralat semasa menjana PDF. Sila cuba lagi.");
+                } finally {
+                    loader.style.display = 'none';
                 }
-                y += 5; // Jarak
-
-                const socialTableBody = Array.from(document.querySelectorAll('#social-media-table tbody tr')).map(row => {
-                    const pelantarCell = row.cells[0];
-                    let pelantar = pelantarCell.innerText;
-                    if (pelantarCell.querySelector('input')) pelantar = pelantarCell.querySelector('input').value;
-                    return [pelantar, row.querySelector('input[name^="social_akaun"]').value, row.querySelector('input[name^="social_followers"]').value];
-                });
-                doc.autoTable({
-                    ...commonTableOptions,
-                    head: [['Pelantar', 'Nama Akaun', 'Bilangan Followers']],
-                    body: socialTableBody,
-                    startY: y,
-                });
-                y = doc.autoTable.previous.finalY + 10;
-
-                // --- Bahagian A: Perkongsian ---
-                doc.setFontSize(12);
-                doc.setFont('helvetica', 'bold');
-                doc.text('Bahagian A: Perkongsian Amalan', 14, y);
-                y += 6;
-                const partATableBody = Array.from(document.querySelectorAll('#bahagian-a-table tbody tr')).map(row => [
-                    row.cells[0].innerText, row.querySelector('input[name^="a_jenis_"]').value, row.querySelector('input[name^="a_tajuk_"]').value, row.querySelector('input[name^="a_medium_"]').value, row.querySelector('.a-skor').value
-                ]);
-                doc.autoTable({
-                    ...commonTableOptions,
-                    head: [['Bil', 'Jenis Perkongsian', 'Tajuk', 'Medium', 'Skor']],
-                    body: partATableBody,
-                    startY: y,
-                    columnStyles: { 0: { cellWidth: 10 }, 1: { cellWidth: 40 }, 2: { cellWidth: 'auto' }, 3: { cellWidth: 30 }, 4: { cellWidth: 15 } }
-                });
-                y = doc.autoTable.previous.finalY + 10;
-                
-                // --- Bahagian B: Sumbangan ---
-                doc.setFontSize(12);
-                doc.setFont('helvetica', 'bold');
-                doc.text('Bahagian B: Sumbangan Khidmat Profesional', 14, y);
-                y += 6;
-                const partBTableBody = Array.from(document.querySelectorAll('#bahagian-b-table tbody tr')).map(row => [
-                    row.cells[0].innerText, row.querySelector('input[name^="b_program_"]').value, row.querySelector('input[name^="b_peranan_"]').value, row.querySelector('input[name^="b_tarikh_"]').value, row.querySelector('input[name^="b_penganjur_"]').value, row.querySelector('.b-skor').value
-                ]);
-                doc.autoTable({
-                    ...commonTableOptions,
-                    head: [['Bil', 'Program', 'Peranan', 'Tarikh', 'Penganjur', 'Skor']],
-                    body: partBTableBody,
-                    startY: y,
-                    columnStyles: { 0: { cellWidth: 10 }, 1: { cellWidth: 'auto' }, 2: { cellWidth: 35 }, 3: { cellWidth: 20 }, 4: { cellWidth: 35 }, 5: { cellWidth: 15 } }
-                });
-                
-                // --- Halaman Baru untuk Bahagian C & Rumusan ---
-                doc.addPage();
-                y = 15;
-                
-                // --- Bahagian C: Dimensi Kualiti ---
-                doc.setFontSize(12);
-                doc.setFont('helvetica', 'bold');
-                doc.text('Bahagian C: Dimensi Kualiti', 14, y);
-                y += 6;
-                const partCTableBody = Array.from(document.querySelectorAll('#table-c tbody tr:not(.header-row)')).map(row => [
-                    row.cells[0].innerText, row.cells[1].innerText, row.querySelector('.skor-c').value
-                ]);
-                doc.autoTable({
-                    ...commonTableOptions,
-                    head: [['Bil', 'Kriteria', 'Skor']],
-                    body: partCTableBody,
-                    startY: y,
-                    columnStyles: { 0: { cellWidth: 10 }, 1: { cellWidth: 'auto' }, 2: { cellWidth: 15 } }
-                });
-                y = doc.autoTable.previous.finalY + 10;
-
-                // --- Rumusan Skor ---
-                doc.setFontSize(12);
-                doc.setFont('helvetica', 'bold');
-                doc.text('Rumusan Skor', 14, y);
-                y += 6;
-                const rumusanData = [
-                    ['Bahagian A', document.getElementById('skor-a-rumusan').value, document.getElementById('peratus-a-rumusan').value + ' %'],
-                    ['Bahagian B', document.getElementById('skor-b-rumusan').value, document.getElementById('peratus-b-rumusan').value + ' %'],
-                    ['Bahagian C', document.getElementById('skor-c-rumusan').value, document.getElementById('peratus-c-rumusan').value + ' %'],
-                    ['JUMLAH KESELURUHAN (%)', '', document.getElementById('jumlah-keseluruhan').value + ' %']
-                ];
-                doc.autoTable({
-                    ...commonTableOptions,
-                    head: [['Komponen', 'Skor Diperoleh', 'Peratus (%)']],
-                    body: rumusanData,
-                    startY: y,
-                });
-                
-                addFooter(doc);
-                doc.save(`Borang Penilaian Kendiri - ${docName}.pdf`);
-                
-            } catch (error) {
-                console.error("Ralat semasa menjana PDF:", error);
-                alert("Maaf, terdapat ralat semasa menjana PDF. Sila cuba lagi.");
-            } finally {
-                loader.style.display = 'none';
-            }
+            });
         }
         downloadPdfBtn.addEventListener('click', generatePdf);
         
@@ -1196,5 +1178,6 @@
     </script>
 </body>
 </html>
+
 
 

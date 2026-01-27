@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Borang Penilaian Kendiri Edufluencer KPM</title>
+    <title>Indeks Kompetensi Kendiri Edufluencers KPM</title>
     <!-- Pustaka untuk Jana PDF (jsPDF & jsPDF-AutoTable) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
@@ -513,10 +513,10 @@
                     <div class="header-logo">
                         <img src="Imej2.gif" alt="Logo Organisasi">
                     </div>
-                    <h1>Arahan Pengisian Borang Penilaian Kendiri Edufluencer KPM</h1>
+                    <h1>Arahan Pengisian Indeks Kompetensi Kendiri Edufluencers KPM</h1>
                     <div class="info-box">
                         <h4>1. Tujuan</h4>
-                        <p>Borang ini dibangunkan sebagai instrumen penilaian kendiri bagi Edufluencer Kementerian Pendidikan (KPM) untuk menilai tahap profesionalisme, kualiti kandungan, komunikasi dan penyampaian, impak, inovasi serta pembangunan berterusan dalam peranan mereka sebagai pendidik digital.</p>
+                        <p>Instrumen ini dibangunkan sebagai Indeks Kompetensi Kendiri Edufluencers Kementerian Pendidikan (KPM) untuk menilai tahap profesionalisme, kualiti kandungan, komunikasi dan penyampaian, impak, inovasi serta pembangunan berterusan dalam peranan mereka sebagai pendidik digital.</p>
                         
                         <h4>2. Objektif</h4>
                         <ul>
@@ -684,7 +684,7 @@
                 
                  <!-- =============== Bahagian Rumusan Skor =============== -->
                 <section id="rumusan" class="tab-content">
-                    <h2>RUMUSAN SKOR KESELURUHAN</h2>
+                    <h2>RUMUSAN INDEKS KOMPETENSI KESELURUHAN</h2>
                     <div class="table-wrapper" id="rumusan-skor-table">
                         <table>
                             <thead><tr><th>Komponen</th><th>Skor Diperoleh</th><th>Peratus Skor Diperolehi (%)</th></tr></thead>
@@ -695,7 +695,7 @@
                             </tbody>
                             <tfoot>
                                 <tr><td><strong>JUMLAH KESELURUHAN (%)</strong></td><td colspan="2"><input type="text" id="jumlah-keseluruhan" readonly></td></tr>
-                                <tr id="tahap-row"><td><strong>TAHAP</strong></td><td colspan="2"><input type="text" id="tahap-pencapaian" readonly></td></tr>
+                                <tr id="tahap-row"><td><strong>TAHAP KOMPETENSI</strong></td><td colspan="2"><input type="text" id="tahap-pencapaian" readonly></td></tr>
                             </tfoot>
                         </table>
                     </div>
@@ -739,7 +739,7 @@
             </form>
             
             <footer>
-                <p class="disclaimer">Penafian: Borang ini adalah untuk tujuan penilaian kendiri dan pembangunan profesional sahaja. Maklumat yang diberikan adalah sulit.</p>
+                <p class="disclaimer">Penafian: Instrumen ini adalah Indeks Kompetensi Kendiri untuk tujuan pembangunan profesional sahaja. Maklumat yang diberikan adalah sulit.</p>
                 <p class="copyright">DMU || MFB-ASAS || ©2025</p>
             </footer>
         </main>
@@ -964,7 +964,7 @@
                 docInstance.setFontSize(8);
                 docInstance.setFont('helvetica', 'italic');
                 docInstance.setTextColor(255, 0, 0); // Merah
-                docInstance.text('Dokumen ini dijana untuk simpanan peribadi sahaja dan tiada salinan disimpan pada sistem.', 105, pageHeight - 10, { align: 'center' });
+                docInstance.text('Dokumen ini adalah Indeks Kompetensi Kendiri dan bukan penilaian rasmi.', 105, pageHeight - 10, { align: 'center' });
                 docInstance.setFont('helvetica', 'normal');
                 docInstance.setTextColor(0, 0, 139); // Biru Gelap
                 docInstance.text('DMU | MFB-ASAS | ©2025', 105, pageHeight - 5, { align: 'center' });
@@ -1015,7 +1015,7 @@
 
                     doc.setFontSize(16);
                     doc.setFont('helvetica', 'bold');
-                    doc.text('Borang Penilaian Kendiri Edufluencer KPM', 105, y, { align: 'center' });
+                    doc.text('Indeks Kompetensi Kendiri Edufluencers KPM', 105, y, { align: 'center' });
                     y += 15;
 
                     doc.setFontSize(12);
@@ -1178,6 +1178,7 @@
     </script>
 </body>
 </html>
+
 
 
 

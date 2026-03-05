@@ -1057,7 +1057,7 @@
                     doc.text('Bahagian B: Sumbangan Khidmat Profesional', 14, y);
                     y += 6;
                     const partBTableBody = Array.from(document.querySelectorAll('#bahagian-b-table tbody tr')).map(row => [
-                        row.cells[0].innerText, row.querySelector('input[name^="b_program_"]').value, row.querySelector('input[name^="b_peranan_"]').value, row.querySelector('input[name^="b_tarikh_"]').value, row.querySelector('input[name^="b_penganjur_"]').value, row.querySelector('.b-skor').value
+                        row.cells[0].innerText, row.querySelector('input[name^="b_program_"]').value, row.querySelector('input[name^="b_peranan_"]').value, row.querySelector('input[name^="b_tarikh_"]').value, row.querySelector('select[name^="b_penganjur_"]').value, row.querySelector('.b-skor').value
                     ]);
                     doc.autoTable({ ...commonTableOptions, head: [['Bil', 'Program', 'Peranan', 'Tarikh', 'Penganjur', 'Skor']], body: partBTableBody, startY: y, columnStyles: { 0: { cellWidth: 10 }, 1: { cellWidth: 'auto' }, 2: { cellWidth: 35 }, 3: { cellWidth: 20 }, 4: { cellWidth: 35 }, 5: { cellWidth: 15 } } });
                     
@@ -1179,6 +1179,7 @@
     </script>
 </body>
 </html>
+
 
 
 

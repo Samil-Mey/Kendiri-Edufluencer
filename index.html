@@ -492,6 +492,7 @@
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <img src="Imej1.png" alt="Logo Sidebar">
+            </div>
             <ul>
                 <li><a href="#pengenalan" class="nav-link active">Pengenalan</a></li>
                 <li><a href="#maklumat-diri" class="nav-link">Maklumat Diri</a></li>
@@ -576,7 +577,8 @@
                                 <tr><td>X<input type="hidden" name="social_pelantar_4" value="X"></td><td><input type="text" name="social_akaun_4" value="TIADA"></td><td><input type="number" name="social_followers_4" value="0"></td></tr>
                                 <tr><td>YouTube<input type="hidden" name="social_pelantar_5" value="YouTube"></td><td><input type="text" name="social_akaun_5" value="TIADA"></td><td><input type="number" name="social_followers_5" value="0"></td></tr>
                                 <tr><td>Threads<input type="hidden" name="social_pelantar_6" value="Threads"></td><td><input type="text" name="social_akaun_6" value="TIADA"></td><td><input type="number" name="social_followers_6" value="0"></td></tr>
-                                <tr><td><input type="text" name="social_pelantar_7" placeholder="Lain-lain..."></td><td><input type="text" name="social_akaun_7" value="TIADA"></td><td><input type="number" name="social_followers_7" value="0"></td></tr>
+                                <tr><td>Telegram Channel<input type="hidden" name="social_pelantar_7" value="Telegram Channel"></td><td><input type="text" name="social_akaun_7" value="TIADA"></td><td><input type="number" name="social_followers_7" value="0"></td></tr>
+                                <tr><td><input type="text" name="social_pelantar_8" placeholder="Lain-lain..."></td><td><input type="text" name="social_akaun_8" value="TIADA"></td><td><input type="number" name="social_followers_8" value="0"></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -782,7 +784,16 @@
                     <td><input type="text" name="b_program_${i}"></td>
                     <td><input type="text" name="b_peranan_${i}"></td>
                     <td><input type="text" name="b_tarikh_${i}"></td>
-                    <td><input type="text" name="b_penganjur_${i}"></td>
+                    <td>
+                        <select name="b_penganjur_${i}">
+                        <option value="">Pilih</option>
+                        <option value="Antarabangsa">Antarabangsa</option>
+                        <option value="Kebangsaan">Kebangsaan</option>
+                        <option value="Negeri">Negeri</option>
+                        <option value="Daerah">Daerah</option>
+                        <option value="Institusi">Institusi</option>
+                        </select>
+                    </td>
                     <td>${createScoreSelect('b', i)}</td>
                 `;
             }
@@ -878,17 +889,17 @@
 
         // --- FUNGSI PENGIRAAN SKOR AUTOMATIK ---
         function calculateScores() {
-            let totalA = Array.from(document.querySelectorAll('.a-skor')).reduce((sum, el) => sum + parseInt(el.value), 0);
+            let totalA = Array.from(document.querySelectorAll('.a-skor')).reduce((sum, el) => sum + (parseInt(el.value) || 0), 0);
             document.getElementById('skor-a-rumusan').value = totalA;
             const peratusA = (totalA / 25) * 40;
             document.getElementById('peratus-a-rumusan').value = peratusA.toFixed(2);
             
-            let totalB = Array.from(document.querySelectorAll('.b-skor')).reduce((sum, el) => sum + parseInt(el.value), 0);
+            let totalB = Array.from(document.querySelectorAll('.b-skor')).reduce((sum, el) => sum + (parseInt(el.value) || 0), 0);
             document.getElementById('skor-b-rumusan').value = totalB;
             const peratusB = (totalB / 25) * 20;
             document.getElementById('peratus-b-rumusan').value = peratusB.toFixed(2);
 
-            let totalC = Array.from(document.querySelectorAll('.skor-c')).reduce((sum, el) => sum + parseInt(el.value), 0);
+            let totalC = Array.from(document.querySelectorAll('.skor-c')).reduce((sum, el) => sum + (parseInt(el.value) || 0), 0);
             document.getElementById('skor-c-rumusan').value = totalC;
             const peratusC = (totalC / 65) * 40;
             document.getElementById('peratus-c-rumusan').value = peratusC.toFixed(2);
@@ -1036,9 +1047,9 @@
                     doc.text('Bahagian A: Perkongsian Amalan', 14, y);
                     y += 6;
                     const partATableBody = Array.from(document.querySelectorAll('#bahagian-a-table tbody tr')).map(row => [
-                        row.cells[0].innerText, row.querySelector('input[name^="a_jenis_"]').value, row.querySelector('input[name^="a_tajuk_"]').value, row.querySelector('input[name^="a_medium_"]').value, row.querySelector('.a-skor').value
+                        row.cells[0].innerText, row.querySelector('input[name^="a_jenis_"]').value, row.querySelector('input[name^="a_tajuk_"]').value, row.querySelector('input[name^="a_medium_"]').value, row.querySelector('input[name^="a_pautan_"]').value, row.querySelector('.a-skor').value
                     ]);
-                    doc.autoTable({ ...commonTableOptions, head: [['Bil', 'Jenis Perkongsian', 'Tajuk', 'Medium', 'Skor']], body: partATableBody, startY: y, columnStyles: { 0: { cellWidth: 10 }, 1: { cellWidth: 40 }, 2: { cellWidth: 'auto' }, 3: { cellWidth: 30 }, 4: { cellWidth: 15 } } });
+                    doc.autoTable({ ...commonTableOptions, head: [['Bil', 'Jenis Perkongsian', 'Tajuk', 'Medium', 'Pautan', 'Skor']], body: partATableBody, startY: y, columnStyles: { 0: { cellWidth: 10 }, 1: { cellWidth: 40 }, 2: { cellWidth: 'auto' }, 3: { cellWidth: 30 }, 4: { cellWidth: 15 } } });
                     y = doc.autoTable.previous.finalY + 10;
                     
                     doc.setFontSize(12);
@@ -1168,6 +1179,7 @@
     </script>
 </body>
 </html>
+
 
 
 

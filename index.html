@@ -532,22 +532,7 @@
                            <strong>Bahagian C: Dimensi Kualiti</strong>
                         </p>
 
-                        <h4>4. Jumlah Skor</h4>
-                        <p>a. Jumlahkan semua skor yang diperoleh.<br>
-                           b. Bandingkan jumlah skor dengan tahap penilaian berikut:</p>
-                        <div class="table-wrapper">
-                            <table>
-                                <thead><tr><th>Skor</th><th>Tahap</th></tr></thead>
-                                <tbody>
-                                    <tr><td>90 – 100</td><td>#TopInfluencer</td></tr>
-                                    <tr><td>80 – 89.99</td><td>#Trendsetter</td></tr>
-                                    <tr><td>60 – 79.99</td><td>#NextGen</td></tr>
-                                    <tr><td>0 – 59.99</td><td>#Starter</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <h4>5. Kerahsiaan</h4>
+                        <h4>4. Kerahsiaan</h4>
                         <p>Penilaian kendiri ini adalah untuk kegunaan peribadi dan pembangunan profesional. Maklumat yang diisi tidak akan menjejaskan penilaian rasmi kecuali diminta untuk rujukan oleh pihak KPM.</p>
                     </div>
                     <div class="section-controls">
@@ -575,14 +560,15 @@
                             <option value="Kolej Vokasional">Kolej Vokasional</option>
                             <option value="PPD">PPD</option>
                             <option value="JPN">JPN</option>
-                            <option value="KPM">KPM</option>
+                            <option value="KPM">Bahagian</option>
+                             <option value="DLL">Lain-Lain</option>
                         </select>
                     </div>
-                    <h4>Media Sosial</h4>
+                    <h4>Media Sosial (Setakat 01 Jun 2026)</h4>
                     <p><i>Arahan: Sila isi nama akaun anda. Jika tiada, sila tulis "TIADA".</i></p>
                     <div class="table-wrapper">
                         <table id="social-media-table">
-                            <thead><tr><th>Pelantar</th><th>Nama Akaun</th><th>Bilangan Followers</th></tr></thead>
+                            <thead><tr><th>Pelantar</th><th>Pautan ke Akaun</th><th>Bilangan Followers</th></tr></thead>
                             <tbody>
                                 <tr><td>Facebook<input type="hidden" name="social_pelantar_1" value="Facebook"></td><td><input type="text" name="social_akaun_1" value="TIADA"></td><td><input type="number" name="social_followers_1" value="0"></td></tr>
                                 <tr><td>TikTok<input type="hidden" name="social_pelantar_2" value="TikTok"></td><td><input type="text" name="social_akaun_2" value="TIADA"></td><td><input type="number" name="social_followers_2" value="0"></td></tr>
@@ -603,27 +589,31 @@
 
                 <!-- =============== Bahagian A: Perkongsian Amalan (40%) =============== -->
                 <section id="bahagian-a" class="tab-content">
+                    
                     <h2>BAHAGIAN A: PERKONGSIAN AMALAN (40%)</h2>
-                    <p><strong>Arahan:</strong> Sila senaraikan sehingga lima (5) aktiviti dan bukti perkongsian amalan yang telah dilaksanakan.</p>
-                    <div class="table-wrapper">
-                        <table id="bahagian-a-table">
-                            <thead><tr><th>Bil</th><th>Jenis Perkongsian</th><th>Tajuk</th><th>Medium</th><th>Pautan/Bukti</th><th>Skor</th></tr></thead>
-                            <tbody id="table-body-a"></tbody>
-                        </table>
-                    </div>
+                    
                     <h4>Rubrik Bahagian A</h4>
                     <div class="table-wrapper">
                         <table>
                             <thead><tr><th>Skor</th><th>Kriteria</th></tr></thead>
                             <tbody>
                                 <tr><td>5</td><td>Perkongsian amalan inovatif, berimpak tinggi, pelibatan melebihi 1000 engagement</td></tr>
-                                <tr><td>4</td><td>Amalan baik yang jelas, disampaikan dalam bentuk kreatif, pelibatan 500–999</td></tr>
-                                <tr><td>3</td><td>Perkongsian berkualiti sederhana, capaian sekitar 200–499</td></tr>
-                                <tr><td>2</td><td>Kandungan asas, kurang penglibatan atau pengaruh</td></tr>
-                                <tr><td>1</td><td>Perkongsian terlalu ringkas atau tiada elemen nilai tambah</td></tr>
+                                <tr><td>4</td><td>Perkongsian amalan baik yang jelas, disampaikan dalam bentuk kreatif, pelibatan 500–999</td></tr>
+                                <tr><td>3</td><td>Perkongsian amalan berkualiti sederhana, capaian sekitar 200–499</td></tr>
+                                <tr><td>2</td><td>Perkongsian amalan asas, kurang penglibatan atau pengaruh</td></tr>
+                                <tr><td>1</td><td>Perkongsian amalan terlalu ringkas atau tiada elemen nilai tambah</td></tr>
                             </tbody>
                         </table>
                     </div>
+                    
+                    <p><strong>Arahan:</strong> Sila senaraikan lima (5) kandungan terbaik anda berserta pautan. (Bermula 01 Jun 2025)</p>
+                    <div class="table-wrapper">
+                        <table id="bahagian-a-table">
+                            <thead><tr><th>Bil</th><th>Jenis Perkongsian</th><th>Tajuk</th><th>Medium</th><th>Pautan/Bukti</th><th>Skor</th></tr></thead>
+                            <tbody id="table-body-a"></tbody>
+                        </table>
+                    </div>
+                    
                     <div class="section-controls">
                         <button type="button" class="btn back-btn" data-prev="maklumat-diri">Kembali</button>
                         <button type="button" class="btn section-lock-btn" data-section="bahagian-a">Selesai</button>
@@ -635,13 +625,7 @@
                 <!-- =============== Bahagian B: Sumbangan Profesional (20%) =============== -->
                 <section id="bahagian-b" class="tab-content">
                      <h2>BAHAGIAN B: SUMBANGAN KHIDMAT PROFESIONAL (20%)</h2>
-                     <p><strong>Arahan:</strong> Sila nyatakan bentuk sumbangan khidmat profesional yang telah diberikan.</p>
-                     <div class="table-wrapper">
-                         <table id="bahagian-b-table">
-                            <thead><tr><th>Bil</th><th>Program</th><th>Peranan</th><th>Tarikh/Tahun</th><th>Penganjur</th><th>Skor</th></tr></thead>
-                            <tbody id="table-body-b"></tbody>
-                        </table>
-                     </div>
+                     <p><strong>Arahan:</strong> Sila nyatakan bentuk sumbangan khidmat profesional yang telah diberikan.(Bermula 01 Jun 2025)</p>
                     <h4>Rubrik Bahagian B</h4>
                     <div class="table-wrapper">
                         <table>
@@ -655,6 +639,13 @@
                             </tbody>
                         </table>
                     </div>
+                     <div class="table-wrapper">
+                         <table id="bahagian-b-table">
+                            <thead><tr><th>Bil</th><th>Program</th><th>Peranan</th><th>Tarikh/Tahun</th><th>Peringkat</th><th>Skor</th></tr></thead>
+                            <tbody id="table-body-b"></tbody>
+                        </table>
+                     </div>
+                    
                     <div class="section-controls">
                         <button type="button" class="btn back-btn" data-prev="bahagian-a">Kembali</button>
                         <button type="button" class="btn section-lock-btn" data-section="bahagian-b">Selesai</button>
@@ -740,7 +731,6 @@
             
             <footer>
                 <p class="disclaimer">Penafian: Instrumen ini adalah Indeks Kompetensi Kendiri untuk tujuan pembangunan profesional sahaja. Maklumat yang diberikan adalah sulit.</p>
-                <p class="copyright">DMU || MFB-ASAS || ©2025</p>
             </footer>
         </main>
     </div>
@@ -1178,6 +1168,7 @@
     </script>
 </body>
 </html>
+
 
 
 
